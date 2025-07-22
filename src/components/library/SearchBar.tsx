@@ -19,11 +19,13 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
 
     const handleSearch = () => {
         onSearch(filters);
+        setShowAdvanced(false); // Cerrar popover después de buscar
     };
 
     const handleClear = () => {
         setFilters({});
         onSearch({});
+        setShowAdvanced(false); // Cerrar popover después de limpiar
     };
 
     const updateFilter = (key: keyof SearchFilters, value: string) => {
@@ -42,19 +44,20 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Buscar libros..."
+                        placeholder="Search books..."
                         value={filters.query || ''}
                         onChange={(e) => updateFilter('query', e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         className="pl-10"
+                        disabled={isLoading}
                     />
                 </div>
 
                 <Popover open={showAdvanced} onOpenChange={setShowAdvanced}>
                     <PopoverTrigger asChild>
-                        <Button variant="outline" className="relative">
+                        <Button variant="outline" className="relative" disabled={isLoading}>
                             <Filter className="h-4 w-4 mr-2" />
-                            Filtros
+                            Filters
                             {activeFilterCount > 0 && (
                                 <Badge variant="secondary" className="ml-2 h-5 w-5 rounded-full p-0 text-xs">
                                     {activeFilterCount}
@@ -62,52 +65,72 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                             )}
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent align="end" className="w-80">
+                    <PopoverContent align="end" className="w-80" sideOffset={5}>
                         <div className="space-y-4">
-                            <h4 className="font-medium">Búsqueda Avanzada</h4>
+                            <div className="flex items-center justify-between">
+                                <h4 className="font-medium">Advanced Search</h4>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setShowAdvanced(false)}
+                                    className="h-8 w-8 p-0"
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="title">Título</Label>
+                                <Label htmlFor="title">Title</Label>
                                 <Input
                                     id="title"
-                                    placeholder="Buscar por título..."
+                                    placeholder="Search by title..."
                                     value={filters.title || ''}
                                     onChange={(e) => updateFilter('title', e.target.value)}
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="author">Autor</Label>
+                                <Label htmlFor="author">Author</Label>
                                 <Input
                                     id="author"
-                                    placeholder="Buscar por autor..."
+                                    placeholder="Search by author..."
                                     value={filters.author || ''}
                                     onChange={(e) => updateFilter('author', e.target.value)}
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="category">Categoría</Label>
+                                <Label htmlFor="category">Category</Label>
                                 <Input
                                     id="category"
-                                    placeholder="Buscar por categoría..."
+                                    placeholder="Search by category..."
                                     value={filters.category || ''}
                                     onChange={(e) => updateFilter('category', e.target.value)}
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label>Estado de lectura</Label>
-                                <Select value={filters.status || ''} onValueChange={(value) => updateFilter('status', value)}>
+                                <Label>Reading Status</Label>
+                                <Select value={filters.status || 'all'} onValueChange={(value) => updateFilter('status', value === 'all' ? '' : value)}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Todos los estados" />
+                                        <SelectValue placeholder="All statuses" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">Todos los estados</SelectItem>
-                                        <SelectItem value="read">Leídos</SelectItem>
-                                        <SelectItem value="unread">No leídos</SelectItem>
+                                        <SelectItem value="all">All statuses</SelectItem>
+                                        <SelectItem value="read">Read</SelectItem>
+                                        <SelectItem value="unread">Unread</SelectItem>
                                     </SelectContent>
                                 </Select>
+                            </div>
+
+                            <div className="flex gap-2 pt-2">
+                                <Button onClick={handleSearch} className="flex-1" disabled={isLoading}>
+                                    <Search className="h-4 w-4 mr-2" />
+                                    Search
+                                </Button>
+                                <Button variant="outline" onClick={handleClear} disabled={isLoading}>
+                                    Clear
+                                </Button>
                             </div>
                         </div>
                     </PopoverContent>
@@ -115,13 +138,13 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
 
                 <Button onClick={handleSearch} disabled={isLoading}>
                     <Search className="h-4 w-4 mr-2" />
-                    Buscar
+                    Search
                 </Button>
 
                 {activeFilterCount > 0 && (
-                    <Button variant="outline" onClick={handleClear}>
+                    <Button variant="outline" onClick={handleClear} disabled={isLoading}>
                         <X className="h-4 w-4 mr-2" />
-                        Limpiar
+                        Clear
                     </Button>
                 )}
             </div>
@@ -131,7 +154,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                 <div className="flex flex-wrap gap-2">
                     {filters.query && (
                         <Badge variant="secondary" className="gap-1">
-                            Búsqueda: {filters.query}
+                            Search: {filters.query}
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('query', '')}
@@ -140,7 +163,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                     )}
                     {filters.title && (
                         <Badge variant="secondary" className="gap-1">
-                            Título: {filters.title}
+                            Title: {filters.title}
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('title', '')}
@@ -149,7 +172,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                     )}
                     {filters.author && (
                         <Badge variant="secondary" className="gap-1">
-                            Autor: {filters.author}
+                            Author: {filters.author}
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('author', '')}
@@ -158,7 +181,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                     )}
                     {filters.category && (
                         <Badge variant="secondary" className="gap-1">
-                            Categoría: {filters.category}
+                            Category: {filters.category}
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('category', '')}
@@ -167,7 +190,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                     )}
                     {filters.status && (
                         <Badge variant="secondary" className="gap-1">
-                            Estado: {filters.status === 'read' ? 'Leídos' : 'No leídos'}
+                            Status: {filters.status === 'read' ? 'Read' : 'Unread'}
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('status', '')}
