@@ -72,8 +72,8 @@ const Index = () => {
     const handleStatusChange = async (isbn: string, status: "read" | "unread") => {
         try {
             await libraryAPI.updateReadingStatus(isbn, status);
-            queryClient.invalidateQueries({ queryKey: ['books'] });
-            queryClient.invalidateQueries({ queryKey: ['statistics'] });
+            await queryClient.invalidateQueries({ queryKey: ['books'] });
+            await queryClient.invalidateQueries({ queryKey: ['statistics'] });
             toast({
                 title: "Status updated",
                 description: `Book marked as ${status === 'read' ? 'read' : 'unread'}`,
@@ -90,8 +90,8 @@ const Index = () => {
     const handleDelete = async (isbn: string) => {
         try {
             await libraryAPI.deleteBook(isbn);
-            queryClient.invalidateQueries({ queryKey: ['books'] });
-            queryClient.invalidateQueries({ queryKey: ['statistics'] });
+            await queryClient.invalidateQueries({ queryKey: ['books'] });
+            await queryClient.invalidateQueries({ queryKey: ['statistics'] });
             toast({
                 title: "Book deleted",
                 description: "The book has been removed from your library",
@@ -115,14 +115,14 @@ const Index = () => {
         setShowEdit(true);
     };
 
-    const handleBookAdded = () => {
-        queryClient.invalidateQueries({ queryKey: ['books'] });
-        queryClient.invalidateQueries({ queryKey: ['statistics'] });
+    const handleBookAdded = async () => {
+        await queryClient.invalidateQueries({ queryKey: ['books'] });
+        await queryClient.invalidateQueries({ queryKey: ['statistics'] });
     };
 
-    const handleBookUpdated = () => {
-        queryClient.invalidateQueries({ queryKey: ['books'] });
-        queryClient.invalidateQueries({ queryKey: ['statistics'] });
+    const handleBookUpdated = async () => {
+        await queryClient.invalidateQueries({ queryKey: ['books'] });
+        await queryClient.invalidateQueries({ queryKey: ['statistics'] });
     };
 
     // Calculate pagination info - FIX: Use correct total based on context
