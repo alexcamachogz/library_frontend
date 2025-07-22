@@ -4,7 +4,7 @@ import { BookOpen, BookCheck, Library, TrendingUp } from 'lucide-react';
 import { type StatisticsResponse } from '../../types/book';
 
 interface StatisticsCardsProps {
-    statistics: StatisticsResponse['statistics'] | null;
+    statistics: StatisticsResponse['statistics'] | null | undefined;  // Acepta undefined también
     isLoading?: boolean;
 }
 

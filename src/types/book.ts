@@ -13,19 +13,27 @@ export interface Book {
     reading_status: "read" | "unread";
 }
 
+export interface PaginationInfo {
+    limit: number;
+    skip: number;
+    count: number;
+    total: number;
+    has_next: boolean;
+    has_prev: boolean;
+    page: number;
+    total_pages: number;
+}
+
 export interface BooksResponse {
     message: string;
     books: Book[];
-    pagination: {
-        limit: number;
-        skip: number;
-        count: number;
-    };
+    pagination: PaginationInfo;
     search_criteria?: {
         query?: string;
         title?: string;
         author?: string;
         category?: string;
+        reading_status?: string;
     };
 }
 

@@ -75,13 +75,13 @@ const Index = () => {
             queryClient.invalidateQueries({ queryKey: ['books'] });
             queryClient.invalidateQueries({ queryKey: ['statistics'] });
             toast({
-                title: "Estado actualizado",
-                description: `Libro marcado como ${status === 'read' ? 'leído' : 'no leído'}`,
+                title: "Status updated",
+                description: `Book marked as ${status === 'read' ? 'read' : 'unread'}`,
             });
         } catch (error) {
             toast({
                 title: "Error",
-                description: error instanceof Error ? error.message : "No se pudo actualizar el estado",
+                description: error instanceof Error ? error.message : "Could not update status",
                 variant: "destructive",
             });
         }
@@ -93,13 +93,13 @@ const Index = () => {
             queryClient.invalidateQueries({ queryKey: ['books'] });
             queryClient.invalidateQueries({ queryKey: ['statistics'] });
             toast({
-                title: "Libro eliminado",
-                description: "El libro ha sido eliminado de tu biblioteca",
+                title: "Book deleted",
+                description: "The book has been removed from your library",
             });
         } catch (error) {
             toast({
                 title: "Error",
-                description: error instanceof Error ? error.message : "No se pudo eliminar el libro",
+                description: error instanceof Error ? error.message : "Could not delete book",
                 variant: "destructive",
             });
         }
@@ -125,10 +125,17 @@ const Index = () => {
         queryClient.invalidateQueries({ queryKey: ['statistics'] });
     };
 
-    const totalBooks = pagination?.count || 0;
-    const totalPages = Math.ceil(totalBooks / BOOKS_PER_PAGE);
-    const hasNextPage = currentPage < totalPages - 1;
-    const hasPrevPage = currentPage > 0;
+    // Calculate pagination info - FIX: Use correct total based on context
+    const isSearching = Object.values(searchFilters).some(v => v && v.length > 0);
+    const totalBooks = isSearching ? (pagination?.total || 0) : (statistics?.total_books || 0);
+    const currentResults = pagination?.count || 0;
+    const totalPages = pagination?.total_pages || Math.ceil(totalBooks / BOOKS_PER_PAGE);
+    const hasNextPage = pagination?.has_next ?? ((currentPage + 1) * BOOKS_PER_PAGE < totalBooks);
+    const hasPrevPage = pagination?.has_prev ?? (currentPage > 0);
+
+    // Calculate result range
+    const startResult = currentPage * BOOKS_PER_PAGE + 1;
+    const endResult = Math.min(startResult + currentResults - 1, totalBooks);
 
     return (
         <div className="min-h-screen bg-background">
@@ -136,9 +143,9 @@ const Index = () => {
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                     <div>
-                        <h1 className="text-3xl font-bold">Mi biblioteca</h1>
+                        <h1 className="text-3xl font-bold">My Library</h1>
                         <p className="text-muted-foreground">
-                            Una pequeña colección de libros
+                            A small collection of books
                         </p>
                     </div>
                     <AddBookDialog onBookAdded={handleBookAdded} />
@@ -161,12 +168,16 @@ const Index = () => {
                 {/* Results info */}
                 {booksData && (
                     <div className="flex justify-between items-center mb-4">
-                        <p className="text-sm text-muted-foreground">
-                            {booksData.message}
-                        </p>
+                        <div className="text-sm text-muted-foreground">
+                            {totalBooks > 0 && (
+                                <p>
+                                    Showing {startResult}-{endResult} of {totalBooks} {isSearching ? 'matching' : 'total'} books
+                                </p>
+                            )}
+                        </div>
                         {totalPages > 1 && (
                             <p className="text-sm text-muted-foreground">
-                                Página {currentPage + 1} de {totalPages}
+                                Page {currentPage + 1} of {totalPages}
                             </p>
                         )}
                     </div>
@@ -184,28 +195,90 @@ const Index = () => {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="flex justify-center items-center gap-2 mt-8">
-                        <Button
-                            variant="outline"
-                            onClick={() => setCurrentPage(prev => prev - 1)}
-                            disabled={!hasPrevPage}
-                        >
-                            <ChevronLeft className="h-4 w-4 mr-2" />
-                            Anterior
-                        </Button>
+                    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8">
+                        {/* Page info for mobile */}
+                        <div className="text-sm text-muted-foreground sm:hidden">
+                            Page {currentPage + 1} of {totalPages}
+                        </div>
 
-                        <span className="text-sm text-muted-foreground px-4">
-              {currentPage + 1} / {totalPages}
-            </span>
+                        {/* Navigation buttons */}
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="outline"
+                                onClick={() => setCurrentPage(0)}
+                                disabled={!hasPrevPage}
+                                className="hidden sm:flex"
+                            >
+                                First
+                            </Button>
 
-                        <Button
-                            variant="outline"
-                            onClick={() => setCurrentPage(prev => prev + 1)}
-                            disabled={!hasNextPage}
-                        >
-                            Siguiente
-                            <ChevronRight className="h-4 w-4 ml-2" />
-                        </Button>
+                            <Button
+                                variant="outline"
+                                onClick={() => setCurrentPage(prev => prev - 1)}
+                                disabled={!hasPrevPage}
+                            >
+                                <ChevronLeft className="h-4 w-4 mr-2" />
+                                Previous
+                            </Button>
+
+                            {/* Page numbers (desktop only) */}
+                            <div className="hidden sm:flex items-center gap-1">
+                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                    let pageNum;
+                                    if (totalPages <= 5) {
+                                        pageNum = i;
+                                    } else if (currentPage < 3) {
+                                        pageNum = i;
+                                    } else if (currentPage > totalPages - 4) {
+                                        pageNum = totalPages - 5 + i;
+                                    } else {
+                                        pageNum = currentPage - 2 + i;
+                                    }
+
+                                    return (
+                                        <Button
+                                            key={pageNum}
+                                            variant={pageNum === currentPage ? "default" : "outline"}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(pageNum)}
+                                            className="w-10 h-10"
+                                        >
+                                            {pageNum + 1}
+                                        </Button>
+                                    );
+                                })}
+                            </div>
+
+                            <Button
+                                variant="outline"
+                                onClick={() => setCurrentPage(prev => prev + 1)}
+                                disabled={!hasNextPage}
+                            >
+                                Next
+                                <ChevronRight className="h-4 w-4 ml-2" />
+                            </Button>
+
+                            <Button
+                                variant="outline"
+                                onClick={() => setCurrentPage(totalPages - 1)}
+                                disabled={!hasNextPage}
+                                className="hidden sm:flex"
+                            >
+                                Last
+                            </Button>
+                        </div>
+
+                        {/* Results info for desktop */}
+                        <div className="hidden sm:block text-sm text-muted-foreground">
+                            {startResult}-{endResult} of {totalBooks}
+                        </div>
+                    </div>
+                )}
+
+                {/* No pagination needed message */}
+                {totalBooks > 0 && totalPages <= 1 && (
+                    <div className="text-center mt-8 text-sm text-muted-foreground">
+                        All {totalBooks} books are displayed
                     </div>
                 )}
 

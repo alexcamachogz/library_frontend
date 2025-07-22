@@ -53,7 +53,7 @@ class LibraryAPI {
         });
     }
 
-    // Search
+    // Search with better pagination handling
     async searchBooks(filters: SearchFilters, limit = 50, skip = 0): Promise<BooksResponse> {
         const params = new URLSearchParams();
 
@@ -90,6 +90,17 @@ class LibraryAPI {
     // Statistics
     async getStatistics(): Promise<StatisticsResponse> {
         return this.request<StatisticsResponse>('/books/statistics');
+    }
+
+    // Helper method to get total count for a specific search
+    async getTotalCount(filters: SearchFilters = {}): Promise<number> {
+        try {
+            const response = await this.searchBooks(filters, 1, 0);
+            return response.pagination?.count || 0;
+        } catch (error) {
+            console.error('Error getting total count:', error);
+            return 0;
+        }
     }
 }
 
