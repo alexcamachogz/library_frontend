@@ -7,7 +7,7 @@ import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
-import { Loader2, X, Plus } from 'lucide-react';
+import { Loader2, X, Plus, Upload } from 'lucide-react';
 import { type Book } from '../../types/book';
 import { libraryAPI } from '../../services/api';
 import { useToast } from '../../hooks/use-toast';
@@ -38,6 +38,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                 published_date: book.published_date,
                 language: book.language,
                 reading_status: book.reading_status,
+                cover_image: book.cover_image,
             });
         }
     }, [book]);
@@ -50,15 +51,15 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
         try {
             await libraryAPI.updateBook(book.isbn, formData);
             toast({
-                title: "Libro actualizado",
-                description: "Los cambios se han guardado exitosamente",
+                title: "Book updated",
+                description: "Changes have been saved successfully",
             });
             onOpenChange(false);
             onBookUpdated();
         } catch (error) {
             toast({
                 title: "Error",
-                description: error instanceof Error ? error.message : "No se pudo actualizar el libro",
+                description: error instanceof Error ? error.message : "Could not update book",
                 variant: "destructive",
             });
         } finally {
@@ -106,14 +107,14 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[600px] max-h-[90vh]">
                 <DialogHeader>
-                    <DialogTitle>Editar Libro</DialogTitle>
+                    <DialogTitle>Edit Book</DialogTitle>
                 </DialogHeader>
 
                 <ScrollArea className="max-h-[70vh] pr-4">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {/* Title */}
                         <div className="space-y-2">
-                            <Label htmlFor="title">Título</Label>
+                            <Label htmlFor="title">Title</Label>
                             <Input
                                 id="title"
                                 value={formData.title || ''}
@@ -124,10 +125,10 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
 
                         {/* Authors */}
                         <div className="space-y-2">
-                            <Label>Autores</Label>
+                            <Label>Authors</Label>
                             <div className="flex gap-2">
                                 <Input
-                                    placeholder="Agregar autor..."
+                                    placeholder="Add author..."
                                     value={newAuthor}
                                     onChange={(e) => setNewAuthor(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addAuthor())}
@@ -151,7 +152,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
 
                         {/* Description */}
                         <div className="space-y-2">
-                            <Label htmlFor="description">Descripción</Label>
+                            <Label htmlFor="description">Description</Label>
                             <Textarea
                                 id="description"
                                 value={formData.description || ''}
@@ -160,12 +161,41 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                             />
                         </div>
 
-                        {/* Categories */}
+                        {/* Cover Image URL */}
                         <div className="space-y-2">
-                            <Label>Categorías</Label>
+                            <Label htmlFor="cover_image">Cover Image URL</Label>
                             <div className="flex gap-2">
                                 <Input
-                                    placeholder="Agregar categoría..."
+                                    id="cover_image"
+                                    type="url"
+                                    placeholder="https://example.com/image.jpg"
+                                    value={formData.cover_image || ''}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, cover_image: e.target.value }))}
+                                />
+                                <Button type="button" variant="outline" size="sm">
+                                    <Upload className="h-4 w-4" />
+                                </Button>
+                            </div>
+                            {formData.cover_image && (
+                                <div className="mt-2">
+                                    <img
+                                        src={formData.cover_image}
+                                        alt="Cover preview"
+                                        className="w-20 h-28 object-cover rounded border"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).style.display = 'none';
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Categories */}
+                        <div className="space-y-2">
+                            <Label>Categories</Label>
+                            <div className="flex gap-2">
+                                <Input
+                                    placeholder="Add category..."
                                     value={newCategory}
                                     onChange={(e) => setNewCategory(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())}
@@ -190,7 +220,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                         {/* Publisher and Pages */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="publisher">Editorial</Label>
+                                <Label htmlFor="publisher">Publisher</Label>
                                 <Input
                                     id="publisher"
                                     value={formData.publisher || ''}
@@ -198,7 +228,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="pages">Páginas</Label>
+                                <Label htmlFor="pages">Pages</Label>
                                 <Input
                                     id="pages"
                                     type="number"
@@ -214,7 +244,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                         {/* Published Date and Language */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="published_date">Fecha de publicación</Label>
+                                <Label htmlFor="published_date">Publication Date</Label>
                                 <Input
                                     id="published_date"
                                     type="date"
@@ -223,7 +253,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="language">Idioma</Label>
+                                <Label htmlFor="language">Language</Label>
                                 <Input
                                     id="language"
                                     value={formData.language || ''}
@@ -234,7 +264,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
 
                         {/* Reading Status */}
                         <div className="space-y-2">
-                            <Label>Estado de lectura</Label>
+                            <Label>Reading Status</Label>
                             <Select
                                 value={formData.reading_status}
                                 onValueChange={(value: "read" | "unread") =>
@@ -245,8 +275,8 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="unread">No leído</SelectItem>
-                                    <SelectItem value="read">Leído</SelectItem>
+                                    <SelectItem value="unread">Unread</SelectItem>
+                                    <SelectItem value="read">Read</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -259,11 +289,11 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancelar
+                                Cancel
                             </Button>
                             <Button type="submit" disabled={isLoading}>
                                 {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                                Guardar Cambios
+                                Save Changes
                             </Button>
                         </div>
                     </form>

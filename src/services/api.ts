@@ -40,6 +40,13 @@ class LibraryAPI {
         });
     }
 
+    async addManualBook(bookData: any): Promise<BookResponse> {
+        return this.request<BookResponse>('/books/manual', {
+            method: 'POST',
+            body: JSON.stringify(bookData),
+        });
+    }
+
     async updateBook(isbn: string, updates: Partial<Book>): Promise<BookResponse> {
         return this.request<BookResponse>(`/books/${isbn}`, {
             method: 'PUT',
