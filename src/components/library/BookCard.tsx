@@ -88,55 +88,57 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
                 </div>
             </CardContent>
 
-            <CardFooter className="p-4 pt-0 space-y-2">
-                {/* Reading Status Toggle */}
-                <Button
-                    variant={book.reading_status === "read" ? "default" : "outline"}
-                    size="sm"
-                    className="w-full"
-                    onClick={handleStatusToggle}
-                    disabled={isUpdating}
-                >
-                    {book.reading_status === "read" ? (
-                        <>
-                            <BookOpenCheck className="h-4 w-4 mr-2" />
-                            Leído
-                        </>
-                    ) : (
-                        <>
-                            <BookOpen className="h-4 w-4 mr-2" />
-                            No leído
-                        </>
-                    )}
-                </Button>
+            <CardFooter className="p-4 pt-0">
+                <div className="w-full space-y-2">
+                    {/* Reading Status Toggle */}
+                    <Button
+                        variant={book.reading_status === "read" ? "default" : "outline"}
+                        size="sm"
+                        className="w-full"
+                        onClick={handleStatusToggle}
+                        disabled={isUpdating}
+                    >
+                        {book.reading_status === "read" ? (
+                            <>
+                                <BookOpenCheck className="h-4 w-4 mr-2" />
+                                Leído
+                            </>
+                        ) : (
+                            <>
+                                <BookOpen className="h-4 w-4 mr-2" />
+                                No leído
+                            </>
+                        )}
+                    </Button>
 
-                {/* Action Buttons */}
-                <div className="flex gap-1 w-full">
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => onView(book)}
-                    >
-                        <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => onEdit(book)}
-                    >
-                        <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1"
-                        onClick={handleDelete}
-                        disabled={isDeleting}
-                    >
-                        <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {/* Action Buttons - New row */}
+                    <div className="flex gap-1 w-full">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="flex-1"
+                            onClick={() => onView(book)}
+                        >
+                            <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="flex-1"
+                            onClick={() => onEdit(book)}
+                        >
+                            <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="flex-1"
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                        >
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </div>
                 </div>
             </CardFooter>
         </Card>
