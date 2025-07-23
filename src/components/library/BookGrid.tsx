@@ -5,7 +5,7 @@ import { Skeleton } from '../ui/skeleton';
 interface BookGridProps {
     books: Book[];
     isLoading?: boolean;
-    onStatusChange: (isbn: string, status: "read" | "unread") => Promise<void>;
+    onStatusChange: (isbn: string, status: "read" | "unread" | "in_progress") => Promise<void>;
     onView: (book: Book) => void;
     onEdit: (book: Book) => void;
     onDelete: (isbn: string) => Promise<void>;

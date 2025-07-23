@@ -27,7 +27,7 @@ interface ManualBookData {
     published_date: string;
     language: string;
     cover_image: string;
-    reading_status: "read" | "unread";
+    reading_status: "read" | "unread" | "in_progress";
 }
 
 export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
@@ -82,7 +82,7 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
         if (!isbn.trim()) {
             toast({
                 title: "Error",
-                description: "Please enter a valid ISBN",
+                description: "Por favor ingresa un ISBN válido",
                 variant: "destructive",
             });
             return;
@@ -92,8 +92,8 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
         try {
             await libraryAPI.addBook(isbn.trim());
             toast({
-                title: "Book added",
-                description: "The book has been successfully added to your library",
+                title: "Libro agregado",
+                description: "El libro ha sido agregado exitosamente a tu biblioteca",
             });
             resetForm();
             setOpen(false);
@@ -101,7 +101,7 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
         } catch (error) {
             toast({
                 title: "Error",
-                description: error instanceof Error ? error.message : "Could not add book",
+                description: error instanceof Error ? error.message : "No se pudo agregar el libro",
                 variant: "destructive",
             });
         } finally {
@@ -115,7 +115,7 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
         if (!manualData.title.trim() || !manualData.isbn.trim()) {
             toast({
                 title: "Error",
-                description: "Title and ISBN are required",
+                description: "El título y el ISBN son requeridos",
                 variant: "destructive",
             });
             return;
@@ -124,7 +124,7 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
         if (manualData.authors.length === 0) {
             toast({
                 title: "Error",
-                description: "At least one author is required",
+                description: "Se requiere al menos un autor",
                 variant: "destructive",
             });
             return;
@@ -142,8 +142,8 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
 
             await libraryAPI.addManualBook(bookData);
             toast({
-                title: "Book added",
-                description: "The book has been successfully added to your library",
+                title: "Libro agregado",
+                description: "El libro ha sido agregado exitosamente a tu biblioteca",
             });
             resetForm();
             setOpen(false);
@@ -151,7 +151,7 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
         } catch (error) {
             toast({
                 title: "Error",
-                description: error instanceof Error ? error.message : "Could not add book",
+                description: error instanceof Error ? error.message : "No se pudo agregar el libro",
                 variant: "destructive",
             });
         } finally {
@@ -202,23 +202,23 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
             <DialogTrigger asChild>
                 <Button>
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Book
+                    Agregar Libro
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[700px] max-h-[95vh] overflow-hidden">
                 <DialogHeader>
-                    <DialogTitle>Add New Book</DialogTitle>
+                    <DialogTitle>Agregar Nuevo Libro</DialogTitle>
                 </DialogHeader>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
                     <TabsList className="grid w-full grid-cols-2 flex-shrink-0">
                         <TabsTrigger value="isbn" className="flex items-center gap-2">
                             <BookOpen className="h-4 w-4" />
-                            By ISBN
+                            Por ISBN
                         </TabsTrigger>
                         <TabsTrigger value="manual" className="flex items-center gap-2">
                             <Plus className="h-4 w-4" />
-                            Manual Entry
+                            Entrada Manual
                         </TabsTrigger>
                     </TabsList>
 
@@ -228,13 +228,13 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
                                 <Label htmlFor="isbn">ISBN</Label>
                                 <Input
                                     id="isbn"
-                                    placeholder="e.g. 9780439708180"
+                                    placeholder="ej. 9780439708180"
                                     value={isbn}
                                     onChange={(e) => setIsbn(e.target.value)}
                                     disabled={isLoading}
                                 />
                                 <p className="text-sm text-muted-foreground">
-                                    Enter the 10 or 13 digit ISBN of the book
+                                    Ingresa el ISBN de 10 o 13 dígitos del libro
                                 </p>
                             </div>
                             <div className="flex justify-end space-x-2">
@@ -244,11 +244,11 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
                                     onClick={() => setOpen(false)}
                                     disabled={isLoading}
                                 >
-                                    Cancel
+                                    Cancelar
                                 </Button>
                                 <Button type="submit" disabled={isLoading}>
                                     {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                                    Add Book
+                                    Agregar Libro
                                 </Button>
                             </div>
                         </form>
@@ -271,10 +271,10 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="manual-title">Title *</Label>
+                                            <Label htmlFor="manual-title">Título *</Label>
                                             <Input
                                                 id="manual-title"
-                                                placeholder="Book title"
+                                                placeholder="Título del libro"
                                                 value={manualData.title}
                                                 onChange={(e) => updateManualData('title', e.target.value)}
                                                 required
@@ -284,10 +284,10 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
 
                                     {/* Authors */}
                                     <div className="space-y-2">
-                                        <Label>Authors *</Label>
+                                        <Label>Autores *</Label>
                                         <div className="flex gap-2">
                                             <Input
-                                                placeholder="Add author..."
+                                                placeholder="Agregar autor..."
                                                 value={newAuthor}
                                                 onChange={(e) => setNewAuthor(e.target.value)}
                                                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addAuthor())}
@@ -311,10 +311,10 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
 
                                     {/* Description */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="manual-description">Description</Label>
+                                        <Label htmlFor="manual-description">Descripción</Label>
                                         <Textarea
                                             id="manual-description"
-                                            placeholder="Book description..."
+                                            placeholder="Descripción del libro..."
                                             value={manualData.description}
                                             onChange={(e) => updateManualData('description', e.target.value)}
                                             rows={3}
@@ -323,12 +323,12 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
 
                                     {/* Cover Image URL */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="manual-cover">Cover Image URL</Label>
+                                        <Label htmlFor="manual-cover">URL de Imagen de Portada</Label>
                                         <div className="flex gap-2">
                                             <Input
                                                 id="manual-cover"
                                                 type="url"
-                                                placeholder="https://example.com/image.jpg"
+                                                placeholder="https://ejemplo.com/imagen.jpg"
                                                 value={manualData.cover_image}
                                                 onChange={(e) => updateManualData('cover_image', e.target.value)}
                                             />
@@ -340,7 +340,7 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
                                             <div className="mt-2">
                                                 <img
                                                     src={manualData.cover_image}
-                                                    alt="Cover preview"
+                                                    alt="Vista previa de portada"
                                                     className="w-16 h-24 object-cover rounded border"
                                                     onError={(e) => {
                                                         (e.target as HTMLImageElement).style.display = 'none';
@@ -352,10 +352,10 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
 
                                     {/* Categories */}
                                     <div className="space-y-2">
-                                        <Label>Categories</Label>
+                                        <Label>Categorías</Label>
                                         <div className="flex gap-2">
                                             <Input
-                                                placeholder="Add category..."
+                                                placeholder="Agregar categoría..."
                                                 value={newCategory}
                                                 onChange={(e) => setNewCategory(e.target.value)}
                                                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())}
@@ -380,20 +380,20 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
                                     {/* Publisher and Pages */}
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label htmlFor="manual-publisher">Publisher</Label>
+                                            <Label htmlFor="manual-publisher">Editorial</Label>
                                             <Input
                                                 id="manual-publisher"
-                                                placeholder="Publisher name"
+                                                placeholder="Nombre de la editorial"
                                                 value={manualData.publisher}
                                                 onChange={(e) => updateManualData('publisher', e.target.value)}
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="manual-pages">Pages</Label>
+                                            <Label htmlFor="manual-pages">Páginas</Label>
                                             <Input
                                                 id="manual-pages"
                                                 type="number"
-                                                placeholder="Number of pages"
+                                                placeholder="Número de páginas"
                                                 value={manualData.page_count || ''}
                                                 onChange={(e) => updateManualData('page_count', e.target.value ? parseInt(e.target.value) : null)}
                                             />
@@ -403,7 +403,7 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
                                     {/* Published Date and Language */}
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label htmlFor="manual-date">Publication Date</Label>
+                                            <Label htmlFor="manual-date">Fecha de Publicación</Label>
                                             <Input
                                                 id="manual-date"
                                                 type="date"
@@ -412,10 +412,10 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="manual-language">Language</Label>
+                                            <Label htmlFor="manual-language">Idioma</Label>
                                             <Input
                                                 id="manual-language"
-                                                placeholder="en, es, fr..."
+                                                placeholder="es, en, fr..."
                                                 value={manualData.language}
                                                 onChange={(e) => updateManualData('language', e.target.value)}
                                             />
@@ -424,17 +424,18 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
 
                                     {/* Reading Status */}
                                     <div className="space-y-2">
-                                        <Label>Reading Status</Label>
+                                        <Label>Estado de Lectura</Label>
                                         <Select
                                             value={manualData.reading_status}
-                                            onValueChange={(value: "read" | "unread") => updateManualData('reading_status', value)}
+                                            onValueChange={(value: "read" | "unread" | "in_progress") => updateManualData('reading_status', value)}
                                         >
                                             <SelectTrigger>
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="unread">Unread</SelectItem>
-                                                <SelectItem value="read">Read</SelectItem>
+                                                <SelectItem value="unread">📖 No leído</SelectItem>
+                                                <SelectItem value="in_progress">🕐 Leyendo</SelectItem>
+                                                <SelectItem value="read">✅ Leído</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -447,11 +448,11 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
                                             onClick={() => setOpen(false)}
                                             disabled={isLoading}
                                         >
-                                            Cancel
+                                            Cancelar
                                         </Button>
                                         <Button type="submit" disabled={isLoading}>
                                             {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                                            Add Book
+                                            Agregar Libro
                                         </Button>
                                     </div>
                                 </form>

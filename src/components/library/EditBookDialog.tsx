@@ -51,15 +51,15 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
         try {
             await libraryAPI.updateBook(book.isbn, formData);
             toast({
-                title: "Book updated",
-                description: "Changes have been saved successfully",
+                title: "Libro actualizado",
+                description: "Los cambios han sido guardados exitosamente",
             });
             onOpenChange(false);
             onBookUpdated();
         } catch (error) {
             toast({
                 title: "Error",
-                description: error instanceof Error ? error.message : "Could not update book",
+                description: error instanceof Error ? error.message : "No se pudo actualizar el libro",
                 variant: "destructive",
             });
         } finally {
@@ -107,14 +107,14 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[600px] max-h-[90vh]">
                 <DialogHeader>
-                    <DialogTitle>Edit Book</DialogTitle>
+                    <DialogTitle>Editar Libro</DialogTitle>
                 </DialogHeader>
 
                 <ScrollArea className="max-h-[70vh] pr-4">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {/* Title */}
                         <div className="space-y-2">
-                            <Label htmlFor="title">Title</Label>
+                            <Label htmlFor="title">Título</Label>
                             <Input
                                 id="title"
                                 value={formData.title || ''}
@@ -125,10 +125,10 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
 
                         {/* Authors */}
                         <div className="space-y-2">
-                            <Label>Authors</Label>
+                            <Label>Autores</Label>
                             <div className="flex gap-2">
                                 <Input
-                                    placeholder="Add author..."
+                                    placeholder="Agregar autor..."
                                     value={newAuthor}
                                     onChange={(e) => setNewAuthor(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addAuthor())}
@@ -152,7 +152,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
 
                         {/* Description */}
                         <div className="space-y-2">
-                            <Label htmlFor="description">Description</Label>
+                            <Label htmlFor="description">Descripción</Label>
                             <Textarea
                                 id="description"
                                 value={formData.description || ''}
@@ -163,12 +163,12 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
 
                         {/* Cover Image URL */}
                         <div className="space-y-2">
-                            <Label htmlFor="cover_image">Cover Image URL</Label>
+                            <Label htmlFor="cover_image">URL de Imagen de Portada</Label>
                             <div className="flex gap-2">
                                 <Input
                                     id="cover_image"
                                     type="url"
-                                    placeholder="https://example.com/image.jpg"
+                                    placeholder="https://ejemplo.com/imagen.jpg"
                                     value={formData.cover_image || ''}
                                     onChange={(e) => setFormData(prev => ({ ...prev, cover_image: e.target.value }))}
                                 />
@@ -180,7 +180,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                                 <div className="mt-2">
                                     <img
                                         src={formData.cover_image}
-                                        alt="Cover preview"
+                                        alt="Vista previa de portada"
                                         className="w-20 h-28 object-cover rounded border"
                                         onError={(e) => {
                                             (e.target as HTMLImageElement).style.display = 'none';
@@ -192,10 +192,10 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
 
                         {/* Categories */}
                         <div className="space-y-2">
-                            <Label>Categories</Label>
+                            <Label>Categorías</Label>
                             <div className="flex gap-2">
                                 <Input
-                                    placeholder="Add category..."
+                                    placeholder="Agregar categoría..."
                                     value={newCategory}
                                     onChange={(e) => setNewCategory(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())}
@@ -220,7 +220,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                         {/* Publisher and Pages */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="publisher">Publisher</Label>
+                                <Label htmlFor="publisher">Editorial</Label>
                                 <Input
                                     id="publisher"
                                     value={formData.publisher || ''}
@@ -228,7 +228,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="pages">Pages</Label>
+                                <Label htmlFor="pages">Páginas</Label>
                                 <Input
                                     id="pages"
                                     type="number"
@@ -244,7 +244,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                         {/* Published Date and Language */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="published_date">Publication Date</Label>
+                                <Label htmlFor="published_date">Fecha de Publicación</Label>
                                 <Input
                                     id="published_date"
                                     type="date"
@@ -253,7 +253,7 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="language">Language</Label>
+                                <Label htmlFor="language">Idioma</Label>
                                 <Input
                                     id="language"
                                     value={formData.language || ''}
@@ -264,10 +264,10 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
 
                         {/* Reading Status */}
                         <div className="space-y-2">
-                            <Label>Reading Status</Label>
+                            <Label>Estado de Lectura</Label>
                             <Select
                                 value={formData.reading_status}
-                                onValueChange={(value: "read" | "unread") =>
+                                onValueChange={(value: "read" | "unread" | "in_progress") =>
                                     setFormData(prev => ({ ...prev, reading_status: value }))
                                 }
                             >
@@ -275,8 +275,9 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="unread">Unread</SelectItem>
-                                    <SelectItem value="read">Read</SelectItem>
+                                    <SelectItem value="unread">📖 No leído</SelectItem>
+                                    <SelectItem value="in_progress">🕐 Leyendo</SelectItem>
+                                    <SelectItem value="read">✅ Leído</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -289,11 +290,11 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                Cancelar
                             </Button>
                             <Button type="submit" disabled={isLoading}>
                                 {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                                Save Changes
+                                Guardar Cambios
                             </Button>
                         </div>
                     </form>

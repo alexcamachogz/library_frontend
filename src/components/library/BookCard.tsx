@@ -2,12 +2,12 @@ import { type Book } from '../../types/book';
 import { Card, CardContent, CardFooter } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { BookOpen, BookOpenCheck, Eye, Edit, Trash2 } from 'lucide-react';
+import { BookOpen, BookOpenCheck, Eye, Edit, Trash2, Clock } from 'lucide-react';
 import { useState } from 'react';
 
 interface BookCardProps {
     book: Book;
-    onStatusChange: (isbn: string, status: "read" | "unread") => Promise<void>;
+    onStatusChange: (isbn: string, status: "read" | "unread" | "in_progress") => Promise<void>;
     onView: (book: Book) => void;
     onEdit: (book: Book) => void;
     onDelete: (isbn: string) => Promise<void>;
@@ -17,10 +17,24 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
     const [isUpdating, setIsUpdating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const handleStatusToggle = async () => {
+    // Cycle through statuses: unread -> in_progress -> read -> unread
+    const getNextStatus = (currentStatus: Book['reading_status']): Book['reading_status'] => {
+        switch (currentStatus) {
+            case 'unread':
+                return 'in_progress';
+            case 'in_progress':
+                return 'read';
+            case 'read':
+                return 'unread';
+            default:
+                return 'unread';
+        }
+    };
+
+    const handleStatusCycle = async () => {
         setIsUpdating(true);
         try {
-            const newStatus = book.reading_status === "read" ? "unread" : "read";
+            const newStatus = getNextStatus(book.reading_status);
             await onStatusChange(book.isbn, newStatus);
         } finally {
             setIsUpdating(false);
@@ -35,6 +49,36 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
             setIsDeleting(false);
         }
     };
+
+    const getStatusConfig = (status: Book['reading_status']) => {
+        switch (status) {
+            case 'read':
+                return {
+                    icon: BookOpenCheck,
+                    label: 'Leído',
+                    variant: 'default' as const,
+                    className: 'bg-green-100 hover:bg-green-200 text-green-800 border-green-200'
+                };
+            case 'in_progress':
+                return {
+                    icon: Clock,
+                    label: 'Leyendo',
+                    variant: 'secondary' as const,
+                    className: 'bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-200'
+                };
+            case 'unread':
+            default:
+                return {
+                    icon: BookOpen,
+                    label: 'No leído',
+                    variant: 'outline' as const,
+                    className: ''
+                };
+        }
+    };
+
+    const statusConfig = getStatusConfig(book.reading_status);
+    const StatusIcon = statusConfig.icon;
 
     return (
         <Card className="h-full flex flex-col hover:shadow-lg transition-shadow">
@@ -90,25 +134,17 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
 
             <CardFooter className="p-4 pt-0">
                 <div className="w-full space-y-2">
-                    {/* Reading Status Toggle */}
+                    {/* Reading Status Cycle Button */}
                     <Button
-                        variant={book.reading_status === "read" ? "default" : "outline"}
+                        variant={statusConfig.variant}
                         size="sm"
-                        className="w-full"
-                        onClick={handleStatusToggle}
+                        className={`w-full ${statusConfig.className}`}
+                        onClick={handleStatusCycle}
                         disabled={isUpdating}
+                        title={`Cambiar de "${statusConfig.label}" a "${getStatusConfig(getNextStatus(book.reading_status)).label}"`}
                     >
-                        {book.reading_status === "read" ? (
-                            <>
-                                <BookOpenCheck className="h-4 w-4 mr-2" />
-                                Leído
-                            </>
-                        ) : (
-                            <>
-                                <BookOpen className="h-4 w-4 mr-2" />
-                                No leído
-                            </>
-                        )}
+                        <StatusIcon className="h-4 w-4 mr-2" />
+                        {statusConfig.label}
                     </Button>
 
                     {/* Action Buttons - New row */}
@@ -118,6 +154,7 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
                             size="sm"
                             className="flex-1"
                             onClick={() => onView(book)}
+                            title="Ver detalles"
                         >
                             <Eye className="h-4 w-4" />
                         </Button>
@@ -126,6 +163,7 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
                             size="sm"
                             className="flex-1"
                             onClick={() => onEdit(book)}
+                            title="Editar libro"
                         >
                             <Edit className="h-4 w-4" />
                         </Button>
@@ -135,6 +173,7 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
                             className="flex-1"
                             onClick={handleDelete}
                             disabled={isDeleting}
+                            title="Eliminar libro"
                         >
                             <Trash2 className="h-4 w-4" />
                         </Button>

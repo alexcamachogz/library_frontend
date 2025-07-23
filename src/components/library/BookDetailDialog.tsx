@@ -4,7 +4,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
-import { BookOpen, Calendar, Globe, Building, Hash } from 'lucide-react';
+import { BookOpen, Calendar, Globe, Building, Hash, Clock, BookCheck } from 'lucide-react';
 
 interface BookDetailDialogProps {
     book: Book | null;
@@ -27,6 +27,36 @@ export function BookDetailDialog({ book, open, onOpenChange, onEdit }: BookDetai
             return dateString;
         }
     };
+
+    const getStatusConfig = (status: Book['reading_status']) => {
+        switch (status) {
+            case 'read':
+                return {
+                    icon: BookCheck,
+                    label: 'Leído',
+                    variant: 'default' as const,
+                    className: 'bg-green-500 text-white'
+                };
+            case 'in_progress':
+                return {
+                    icon: Clock,
+                    label: 'Leyendo',
+                    variant: 'secondary' as const,
+                    className: 'bg-blue-500 text-white'
+                };
+            case 'unread':
+            default:
+                return {
+                    icon: BookOpen,
+                    label: 'No leído',
+                    variant: 'outline' as const,
+                    className: 'bg-gray-100'
+                };
+        }
+    };
+
+    const statusConfig = getStatusConfig(book.reading_status);
+    const StatusIcon = statusConfig.icon;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -62,8 +92,12 @@ export function BookDetailDialog({ book, open, onOpenChange, onEdit }: BookDetai
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Badge variant={book.reading_status === 'read' ? 'default' : 'secondary'}>
-                                        {book.reading_status === 'read' ? 'Leído' : 'No leído'}
+                                    <Badge
+                                        variant={statusConfig.variant}
+                                        className={`flex items-center gap-1 ${statusConfig.className}`}
+                                    >
+                                        <StatusIcon className="h-3 w-3" />
+                                        {statusConfig.label}
                                     </Badge>
                                 </div>
 

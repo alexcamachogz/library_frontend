@@ -1,8 +1,7 @@
 import type { Book, BooksResponse, BookResponse, StatisticsResponse, SearchFilters } from "../types/book.ts";
 
 // const API_BASE_URL = 'http://localhost:5001/api/v1';
-// Works con phone
-const API_BASE_URL = 'http://192.168.100.32:5001/api/v1';
+const API_BASE_URL = 'http://192.168.100.32:5001/api/v1'
 
 class LibraryAPI {
     private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -42,13 +41,6 @@ class LibraryAPI {
         });
     }
 
-    async addManualBook(bookData: any): Promise<BookResponse> {
-        return this.request<BookResponse>('/books/manual', {
-            method: 'POST',
-            body: JSON.stringify(bookData),
-        });
-    }
-
     async updateBook(isbn: string, updates: Partial<Book>): Promise<BookResponse> {
         return this.request<BookResponse>(`/books/${isbn}`, {
             method: 'PUT',
@@ -62,7 +54,15 @@ class LibraryAPI {
         });
     }
 
-    // Search with better pagination handling
+    // Manual book addition
+    async addManualBook(bookData: Partial<Book>): Promise<BookResponse> {
+        return this.request<BookResponse>('/books/manual', {
+            method: 'POST',
+            body: JSON.stringify(bookData),
+        });
+    }
+
+    // Search
     async searchBooks(filters: SearchFilters, limit = 50, skip = 0): Promise<BooksResponse> {
         const params = new URLSearchParams();
 
@@ -85,31 +85,20 @@ class LibraryAPI {
     }
 
     // Reading status
-    async updateReadingStatus(isbn: string, status: "read" | "unread"): Promise<{ message: string; isbn: string; reading_status: string }> {
+    async updateReadingStatus(isbn: string, status: "read" | "unread" | "in_progress"): Promise<{ message: string; isbn: string; reading_status: string }> {
         return this.request(`/books/${isbn}/status`, {
             method: 'PUT',
             body: JSON.stringify({ reading_status: status }),
         });
     }
 
-    async getBooksByStatus(status: "read" | "unread", limit = 50, skip = 0): Promise<BooksResponse> {
+    async getBooksByStatus(status: "read" | "unread" | "in_progress", limit = 50, skip = 0): Promise<BooksResponse> {
         return this.request<BooksResponse>(`/books/status/${status}?limit=${limit}&skip=${skip}`);
     }
 
     // Statistics
     async getStatistics(): Promise<StatisticsResponse> {
         return this.request<StatisticsResponse>('/books/statistics');
-    }
-
-    // Helper method to get total count for a specific search
-    async getTotalCount(filters: SearchFilters = {}): Promise<number> {
-        try {
-            const response = await this.searchBooks(filters, 1, 0);
-            return response.pagination?.count || 0;
-        } catch (error) {
-            console.error('Error getting total count:', error);
-            return 0;
-        }
     }
 }
 
