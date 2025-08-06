@@ -37,8 +37,8 @@ export function GoogleLoginComponent() {
         if (!isEmailAuthorized(userProfile.email)) {
           setShowUnauthorizedAlert(true);
           toast({
-            title: "Access Denied",
-            description: "Your account is not authorized to access this application.",
+            title: "Accesso Denegado",
+            description: "No tienes autorización para acceder a esta aplicación.",
             variant: "destructive",
           });
           return;
@@ -55,14 +55,14 @@ export function GoogleLoginComponent() {
         localStorage.setItem('googleUser', JSON.stringify(googleUser));
 
         toast({
-          title: "Welcome!",
-          description: `Logged in as ${getUserDisplayName(userProfile.email)}`,
+          title: "Bienvenida!",
+          description: `Iniciaste sesión como ${getUserDisplayName(userProfile.email)}.`,
         });
       } catch (error) {
         console.error('Login error:', error);
         toast({
           title: "Error",
-          description: "Failed to login with Google. Please try again.",
+          description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
           variant: "destructive",
         });
       } finally {
@@ -73,7 +73,7 @@ export function GoogleLoginComponent() {
       console.error('Login Failed:', error);
       toast({
         title: "Error",
-        description: "Failed to login with Google. Please try again.",
+        description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
         variant: "destructive",
       });
     }
@@ -83,8 +83,8 @@ export function GoogleLoginComponent() {
     googleLogout();
     authLogout();
     toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
+      title: "Hasta luego!",
+      description: "Cerraste sesión de forma exitosa.",
     });
   };
 

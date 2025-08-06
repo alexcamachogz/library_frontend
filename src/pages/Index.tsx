@@ -84,8 +84,8 @@ const Index = () => {
 
         try {
             await libraryAPI.updateReadingStatus(isbn, status);
-            queryClient.invalidateQueries({ queryKey: ['books'] });
-            queryClient.invalidateQueries({ queryKey: ['statistics'] });
+            await queryClient.invalidateQueries({queryKey: ['books']});
+            await queryClient.invalidateQueries({queryKey: ['statistics']});
 
             const statusLabels = {
                 'read': 'leído',
@@ -118,8 +118,8 @@ const Index = () => {
 
         try {
             await libraryAPI.deleteBook(isbn);
-            queryClient.invalidateQueries({ queryKey: ['books'] });
-            queryClient.invalidateQueries({ queryKey: ['statistics'] });
+            await queryClient.invalidateQueries({queryKey: ['books']});
+            await queryClient.invalidateQueries({queryKey: ['statistics']});
             toast({
                 title: "Libro eliminado",
                 description: "El libro ha sido eliminado de tu biblioteca",
