@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { BookOpen, BookCheck, Library, TrendingUp, Clock } from 'lucide-react';
 import { type StatisticsResponse } from '../../types/book';
+import { useTranslation } from 'react-i18next';
 
 interface StatisticsCardsProps {
     statistics: StatisticsResponse['statistics'] | null | undefined;
@@ -9,6 +10,7 @@ interface StatisticsCardsProps {
 }
 
 export function StatisticsCards({ statistics, isLoading }: StatisticsCardsProps) {
+    const { t } = useTranslation();
     if (isLoading) {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -34,38 +36,38 @@ export function StatisticsCards({ statistics, isLoading }: StatisticsCardsProps)
 
     const cards = [
         {
-            title: "Total de Libros",
+            title: t('totalBooks'),
             value: statistics.total_books,
             icon: Library,
-            description: "En tu biblioteca",
+            description: t('inYourLibrary'),
             color: "text-blue-500",
         },
         {
-            title: "Libros Leídos",
+            title: t('booksRead'),
             value: statistics.read,
             icon: BookCheck,
-            description: "Completados",
+            description: t('completed'),
             color: "text-green-500",
         },
         {
-            title: "Leyendo Ahora",
+            title: t('readingNow'),
             value: statistics.in_progress,
             icon: Clock,
-            description: "En progreso",
+            description: t('inProgress'),
             color: "text-orange-400",
         },
         {
-            title: "Por Leer",
+            title: t('toRead'),
             value: statistics.unread,
             icon: BookOpen,
-            description: "Pendientes",
+            description: t('pending'),
             color: "text-gray-500",
         },
         {
-            title: "Progreso Total",
+            title: t('totalProgress'),
             value: `${statistics.reading_percentage.toFixed(1)}%`,
             icon: TrendingUp,
-            description: "Porcentaje leído",
+            description: t('readPercentage'),
             color: "text-purple-500",
             showProgress: true,
             progressValue: statistics.reading_percentage,
@@ -96,14 +98,14 @@ export function StatisticsCards({ statistics, isLoading }: StatisticsCardsProps)
                                     className="h-2"
                                 />
                                 <div className="flex justify-between text-xs text-muted-foreground">
-                                    <span>Leídos: {statistics.reading_percentage.toFixed(1)}%</span>
-                                    <span>En progreso: {statistics.progress_percentage.toFixed(1)}%</span>
+                                    <span>{t('read')}: {statistics.reading_percentage.toFixed(1)}%</span>
+                                    <span>{t('inProgress')}: {statistics.progress_percentage.toFixed(1)}%</span>
                                 </div>
                             </div>
                         )}
 
                         {/* Individual progress indicators for other cards */}
-                        {!card.showProgress && card.title !== "Total de Libros" && (
+                        {!card.showProgress && card.title !== t('totalBooks') && (
                             <div className="mt-2">
                                 <Progress
                                     value={(card.value as number / statistics.total_books) * 100}
@@ -115,10 +117,10 @@ export function StatisticsCards({ statistics, isLoading }: StatisticsCardsProps)
 
                     {/* Visual indicator based on card type - Softer colors */}
                     <div className={`absolute bottom-0 left-0 w-full h-1 ${
-                        card.title === "Libros Leídos" ? "bg-green-300" :
-                            card.title === "Leyendo Ahora" ? "bg-orange-300" :
-                                card.title === "Por Leer" ? "bg-gray-300" :
-                                    card.title === "Progreso Total" ? "bg-purple-300" :
+                        card.title === t('booksRead') ? "bg-green-300" :
+                            card.title === t('readingNow') ? "bg-orange-300" :
+                                card.title === t('toRead') ? "bg-gray-300" :
+                                    card.title === t('totalProgress') ? "bg-purple-300" :
                                         "bg-blue-300"
                     }`} />
                 </Card>

@@ -1,6 +1,7 @@
 import { type Book } from '../../types/book';
 import { BookCard } from './BookCard';
 import { Skeleton } from '../ui/skeleton';
+import { useTranslation } from 'react-i18next';
 
 interface BookGridProps {
     books: Book[];
@@ -21,6 +22,7 @@ export function BookGrid({
                              onDelete,
                              isAuthenticated
                          }: BookGridProps) {
+    const { t } = useTranslation();
     if (isLoading) {
         return (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -42,11 +44,11 @@ export function BookGrid({
                     <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
                         📚
                     </div>
-                    <h3 className="text-lg font-semibold mb-2">No hay libros</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t('noBooks')}</h3>
                     <p className="text-muted-foreground">
                         {isAuthenticated
-                            ? "No se encontraron libros con los criterios de búsqueda actuales."
-                            : "Inicia sesión para administrar tu colección de libros."
+                            ? t('noBooksMatchingCriteria')
+                            : t('signInToManageCollection')
                         }
                     </p>
                 </div>

@@ -6,6 +6,7 @@ import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
 import { BookOpen, Calendar, Globe, Building, Hash } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { useTranslation } from 'react-i18next';
 
 interface BookDetailDialogProps {
     book: Book | null;
@@ -22,6 +23,8 @@ export function BookDetailDialog({
                                      onEdit,
                                      isAuthenticated
                                  }: BookDetailDialogProps) {
+    const { t } = useTranslation();
+    
     if (!book) return null;
 
     const formatDate = (dateString: string) => {
@@ -45,7 +48,7 @@ export function BookDetailDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[600px] max-h-[80vh]">
                 <DialogHeader>
-                    <DialogTitle className="sr-only">Detalles del libro</DialogTitle>
+                    <DialogTitle className="sr-only">{t('bookDetails')}</DialogTitle>
                 </DialogHeader>
 
                 <ScrollArea className="max-h-[70vh]">
@@ -76,14 +79,14 @@ export function BookDetailDialog({
 
                                 <div className="flex items-center gap-2">
                                     <Badge variant={book.reading_status === 'read' ? 'default' : 'secondary'}>
-                                        {book.reading_status === 'read' ? 'Leído' : 'No leído'}
+                                        {book.reading_status === 'read' ? t('read') : t('unread')}
                                     </Badge>
                                 </div>
 
                                 {/* Edit Button - Conditional */}
                                 {isAuthenticated ? (
                                     <Button onClick={handleEdit} className="w-full">
-                                        Editar Libro
+                                        {t('editBook')}
                                     </Button>
                                 ) : (
                                     <Tooltip>
@@ -94,12 +97,12 @@ export function BookDetailDialog({
                                                     className="w-full"
                                                     variant="outline"
                                                 >
-                                                    Editar Libro
+                                                    {t('editBook')}
                                                 </Button>
                                             </div>
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                            <p>Sign in to edit books</p>
+                                            <p>{t('signInToEdit')}</p>
                                         </TooltipContent>
                                     </Tooltip>
                                 )}
@@ -111,7 +114,7 @@ export function BookDetailDialog({
                         {/* Categories */}
                         {book.categories.length > 0 && (
                             <div>
-                                <h3 className="font-semibold mb-2">Categorías</h3>
+                                <h3 className="font-semibold mb-2">{t('categories')}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {book.categories.map((category) => (
                                         <Badge key={category} variant="outline">
@@ -125,7 +128,7 @@ export function BookDetailDialog({
                         {/* Description */}
                         {book.description && (
                             <div>
-                                <h3 className="font-semibold mb-2">Descripción</h3>
+                                <h3 className="font-semibold mb-2">{t('description')}</h3>
                                 <p className="text-sm text-muted-foreground leading-relaxed">
                                     {book.description}
                                 </p>
@@ -136,7 +139,7 @@ export function BookDetailDialog({
 
                         {/* Details */}
                         <div className="space-y-3">
-                            <h3 className="font-semibold">Información del libro</h3>
+                            <h3 className="font-semibold">{t('bookInformation')}</h3>
                             <div className="grid grid-cols-1 gap-3 text-sm">
                                 <div className="flex items-center gap-2">
                                     <Hash className="h-4 w-4 text-muted-foreground" />
@@ -147,7 +150,7 @@ export function BookDetailDialog({
                                 {book.publisher && (
                                     <div className="flex items-center gap-2">
                                         <Building className="h-4 w-4 text-muted-foreground" />
-                                        <span className="font-medium">Editorial:</span>
+                                        <span className="font-medium">{t('publisher')}:</span>
                                         <span>{book.publisher}</span>
                                     </div>
                                 )}
@@ -155,7 +158,7 @@ export function BookDetailDialog({
                                 {book.published_date && (
                                     <div className="flex items-center gap-2">
                                         <Calendar className="h-4 w-4 text-muted-foreground" />
-                                        <span className="font-medium">Fecha de publicación:</span>
+                                        <span className="font-medium">{t('publicationDate')}:</span>
                                         <span>{formatDate(book.published_date)}</span>
                                     </div>
                                 )}
@@ -163,7 +166,7 @@ export function BookDetailDialog({
                                 {book.page_count && (
                                     <div className="flex items-center gap-2">
                                         <BookOpen className="h-4 w-4 text-muted-foreground" />
-                                        <span className="font-medium">Páginas:</span>
+                                        <span className="font-medium">{t('pages')}:</span>
                                         <span>{book.page_count}</span>
                                     </div>
                                 )}
@@ -171,7 +174,7 @@ export function BookDetailDialog({
                                 {book.language && (
                                     <div className="flex items-center gap-2">
                                         <Globe className="h-4 w-4 text-muted-foreground" />
-                                        <span className="font-medium">Idioma:</span>
+                                        <span className="font-medium">{t('language')}:</span>
                                         <span>{book.language}</span>
                                     </div>
                                 )}

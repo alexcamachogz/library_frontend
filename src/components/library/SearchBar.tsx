@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
@@ -16,6 +17,7 @@ interface SearchBarProps {
 export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
     const [filters, setFilters] = useState<SearchFilters>({});
     const [showAdvanced, setShowAdvanced] = useState(false);
+    const { t } = useTranslation();
 
     const handleSearch = () => {
         onSearch(filters);
@@ -40,11 +42,11 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
     const getStatusLabel = (status: string) => {
         switch (status) {
             case 'read':
-                return 'Leído';
+                return t('completed');
             case 'in_progress':
-                return 'Leyendo';
+                return t('reading');
             case 'unread':
-                return 'No leído';
+                return t('toRead');
             default:
                 return status;
         }
@@ -57,7 +59,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Buscar libros..."
+                        placeholder={t('searchBooks')}
                         value={filters.query || ''}
                         onChange={(e) => updateFilter('query', e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -70,7 +72,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                     <PopoverTrigger asChild>
                         <Button variant="outline" className="relative" disabled={isLoading}>
                             <Filter className="h-4 w-4 mr-2" />
-                            Filtros
+                            {t('filters')}
                             {activeFilterCount > 0 && (
                                 <Badge variant="secondary" className="ml-2 h-5 w-5 rounded-full p-0 text-xs">
                                     {activeFilterCount}
@@ -81,7 +83,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                     <PopoverContent align="end" className="w-80" sideOffset={5}>
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
-                                <h4 className="font-medium">Búsqueda Avanzada</h4>
+                                <h4 className="font-medium">{t('advancedSearch')}</h4>
                                 <Button
                                     variant="ghost"
                                     size="sm"
@@ -93,49 +95,49 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="title">Título</Label>
+                                <Label htmlFor="title">{t('title')}</Label>
                                 <Input
                                     id="title"
-                                    placeholder="Buscar por título..."
+                                    placeholder={t('searchByTitle')}
                                     value={filters.title || ''}
                                     onChange={(e) => updateFilter('title', e.target.value)}
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="author">Autor</Label>
+                                <Label htmlFor="author">{t('author')}</Label>
                                 <Input
                                     id="author"
-                                    placeholder="Buscar por autor..."
+                                    placeholder={t('searchByAuthor')}
                                     value={filters.author || ''}
                                     onChange={(e) => updateFilter('author', e.target.value)}
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="category">Categoría</Label>
+                                <Label htmlFor="category">{t('category')}</Label>
                                 <Input
                                     id="category"
-                                    placeholder="Buscar por categoría..."
+                                    placeholder={t('searchByCategory')}
                                     value={filters.category || ''}
                                     onChange={(e) => updateFilter('category', e.target.value)}
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label>Estado de Lectura</Label>
+                                <Label>{t('readingStatus')}</Label>
                                 <Select
                                     value={filters.status || 'all'}
                                     onValueChange={(value) => updateFilter('status', value === 'all' ? '' : value)}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Todos los estados" />
+                                        <SelectValue placeholder={t('allStatuses')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">Todos los estados</SelectItem>
-                                        <SelectItem value="unread">📖 No leído</SelectItem>
-                                        <SelectItem value="in_progress">🕐 Leyendo</SelectItem>
-                                        <SelectItem value="read">✅ Leído</SelectItem>
+                                        <SelectItem value="all">{t('allStatuses')}</SelectItem>
+                                        <SelectItem value="unread">📖 {t('toRead')}</SelectItem>
+                                        <SelectItem value="in_progress">🕐 {t('reading')}</SelectItem>
+                                        <SelectItem value="read">✅ {t('completed')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -143,10 +145,10 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                             <div className="flex gap-2 pt-2">
                                 <Button onClick={handleSearch} className="flex-1" disabled={isLoading}>
                                     <Search className="h-4 w-4 mr-2" />
-                                    Buscar
+                                    {t('search')}
                                 </Button>
                                 <Button variant="outline" onClick={handleClear} disabled={isLoading}>
-                                    Limpiar
+                                    {t('clear')}
                                 </Button>
                             </div>
                         </div>
@@ -155,13 +157,13 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
 
                 <Button onClick={handleSearch} disabled={isLoading}>
                     <Search className="h-4 w-4 mr-2" />
-                    Buscar
+                    {t('search')}
                 </Button>
 
                 {activeFilterCount > 0 && (
                     <Button variant="outline" onClick={handleClear} disabled={isLoading}>
                         <X className="h-4 w-4 mr-2" />
-                        Limpiar
+                        {t('clear')}
                     </Button>
                 )}
             </div>
@@ -171,7 +173,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                 <div className="flex flex-wrap gap-2">
                     {filters.query && (
                         <Badge variant="secondary" className="gap-1">
-                            Búsqueda: {filters.query}
+                            {t('search')}: {filters.query}
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('query', '')}
@@ -180,7 +182,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                     )}
                     {filters.title && (
                         <Badge variant="secondary" className="gap-1">
-                            Título: {filters.title}
+                            {t('title')}: {filters.title}
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('title', '')}
@@ -189,7 +191,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                     )}
                     {filters.author && (
                         <Badge variant="secondary" className="gap-1">
-                            Autor: {filters.author}
+                            {t('author')}: {filters.author}
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('author', '')}
@@ -198,7 +200,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                     )}
                     {filters.category && (
                         <Badge variant="secondary" className="gap-1">
-                            Categoría: {filters.category}
+                            {t('category')}: {filters.category}
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('category', '')}
@@ -207,7 +209,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                     )}
                     {filters.status && (
                         <Badge variant="secondary" className="gap-1">
-                            Estado: {getStatusLabel(filters.status)}
+                            {t('status')}: {getStatusLabel(filters.status)}
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('status', '')}

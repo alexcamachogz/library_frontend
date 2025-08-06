@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGoogleLogin, googleLogout } from '@react-oauth/google';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -15,6 +16,7 @@ export function GoogleLoginComponent() {
   const [showUnauthorizedAlert, setShowUnauthorizedAlert] = useState(false);
   const { user, setUser, logout: authLogout } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -37,8 +39,8 @@ export function GoogleLoginComponent() {
         if (!isEmailAuthorized(userProfile.email)) {
           setShowUnauthorizedAlert(true);
           toast({
-            title: "Accesso Denegado",
-            description: "No tienes autorización para acceder a esta aplicación.",
+            title: t('accessDenied'),
+            description: t('noAuthorization'),
             variant: "destructive",
           });
           return;
@@ -55,14 +57,14 @@ export function GoogleLoginComponent() {
         localStorage.setItem('googleUser', JSON.stringify(googleUser));
 
         toast({
-          title: "Bienvenida!",
-          description: `Iniciaste sesión como ${getUserDisplayName(userProfile.email)}.`,
+          title: t('welcome'),
+          description: `${t('signedInAs')} ${getUserDisplayName(userProfile.email)}.`,
         });
       } catch (error) {
         console.error('Login error:', error);
         toast({
-          title: "Error",
-          description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
+          title: t('error'),
+          description: t('couldNotSignInGoogle'),
           variant: "destructive",
         });
       } finally {
@@ -72,8 +74,8 @@ export function GoogleLoginComponent() {
     onError: (error) => {
       console.error('Login Failed:', error);
       toast({
-        title: "Error",
-        description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
+        title: t('error'),
+        description: t('couldNotSignInGoogle'),
         variant: "destructive",
       });
     }
@@ -83,8 +85,8 @@ export function GoogleLoginComponent() {
     googleLogout();
     authLogout();
     toast({
-      title: "Hasta luego!",
-      description: "Cerraste sesión de forma exitosa.",
+      title: t('goodbye'),
+      description: t('signedOutSuccessfully'),
     });
   };
 
@@ -100,8 +102,8 @@ export function GoogleLoginComponent() {
                   {user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <span className="hidden sm:inline-block">Welcome, {displayName}</span>
-              <span className="sm:hidden">Welcome</span>
+              <span className="hidden sm:inline-block">{t('welcome')}, {displayName}</span>
+              <span className="sm:hidden">{t('welcome')}</span>
               <ChevronDown className="h-4 w-4 ml-2" />
             </Button>
           </DropdownMenuTrigger>
@@ -122,7 +124,7 @@ export function GoogleLoginComponent() {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout}>
               <LogOut className="h-4 w-4 mr-2" />
-              Logout
+              {t('signOut')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -135,7 +137,7 @@ export function GoogleLoginComponent() {
             <Alert variant="destructive" className="max-w-sm">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription className="text-sm">
-                Access denied. Contact the administrator for access.
+                {t('accessDeniedMessage')}
               </AlertDescription>
             </Alert>
         )}
@@ -166,7 +168,7 @@ export function GoogleLoginComponent() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          {isLoading ? 'Signing in...' : 'Continue with Google'}
+          {isLoading ? t('signingIn') : t('continueWithGoogle')}
         </Button>
       </div>
   );

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Book, SearchFilters } from "../types/book.ts";
 import { libraryAPI } from '../services/api';
@@ -15,6 +16,7 @@ import { EditBookDialog } from '../components/library/EditBookDialog';
 import { Button } from '../components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { GoogleLoginComponent } from '../components/auth/GoogleLogin';
+import { LanguageSelector } from '../components/ui/language-selector';
 
 const BOOKS_PER_PAGE = 20;
 
@@ -29,6 +31,7 @@ const Index = () => {
     const { toast } = useToast();
     const queryClient = useQueryClient();
     const { isAuthenticated } = useAuth();
+    const { t } = useTranslation();
 
     // Reset page when search changes
     useEffect(() => {
@@ -75,8 +78,8 @@ const Index = () => {
     const handleStatusChange = async (isbn: string, status: "read" | "unread" | "in_progress") => {
         if (!isAuthenticated) {
             toast({
-                title: "Authentication required",
-                description: "Please sign in to update book status",
+                title: t('error'),
+                description: t('authRequiredUpdateStatus'),
                 variant: "destructive",
             });
             return;
@@ -88,19 +91,19 @@ const Index = () => {
             await queryClient.invalidateQueries({queryKey: ['statistics']});
 
             const statusLabels = {
-                'read': 'leído',
-                'in_progress': 'leyendo',
-                'unread': 'no leído'
+                'read': t('completed'),
+                'in_progress': t('reading'),
+                'unread': t('toRead')
             };
 
             toast({
-                title: "Estado actualizado",
-                description: `Libro marcado como ${statusLabels[status]}`,
+                title: t('success'),
+                description: `${t('bookMarkedAs')} ${statusLabels[status]}`,
             });
         } catch (error) {
             toast({
-                title: "Error",
-                description: error instanceof Error ? error.message : "No se pudo actualizar el estado",
+                title: t('error'),
+                description: error instanceof Error ? error.message : t('couldNotUpdateStatus'),
                 variant: "destructive",
             });
         }
@@ -109,8 +112,8 @@ const Index = () => {
     const handleDelete = async (isbn: string) => {
         if (!isAuthenticated) {
             toast({
-                title: "Authentication required",
-                description: "Please sign in to delete books",
+                title: t('error'),
+                description: t('authRequiredDelete'),
                 variant: "destructive",
             });
             return;
@@ -121,13 +124,13 @@ const Index = () => {
             await queryClient.invalidateQueries({queryKey: ['books']});
             await queryClient.invalidateQueries({queryKey: ['statistics']});
             toast({
-                title: "Libro eliminado",
-                description: "El libro ha sido eliminado de tu biblioteca",
+                title: t('success'),
+                description: t('bookDeleted'),
             });
         } catch (error) {
             toast({
-                title: "Error",
-                description: error instanceof Error ? error.message : "No se pudo eliminar el libro",
+                title: t('error'),
+                description: error instanceof Error ? error.message : t('couldNotDeleteBook'),
                 variant: "destructive",
             });
         }
@@ -141,8 +144,8 @@ const Index = () => {
     const handleEdit = (book: Book) => {
         if (!isAuthenticated) {
             toast({
-                title: "Authentication required",
-                description: "Please sign in to edit books",
+                title: t('error'),
+                description: t('authRequiredEdit'),
                 variant: "destructive",
             });
             return;
@@ -174,14 +177,15 @@ const Index = () => {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                     <div>
                         {/* TODO: Añadir logo biblioteca*/}
-                        <h1 className="text-3xl font-bold">Mi biblioteca</h1>
+                        <h1 className="text-3xl font-bold">{t('library')}</h1>
                         {isAuthenticated && (
                             <p className="text-muted-foreground">
-                                Cada libro aquí guarda una historia, una lección o un momento.
+                                {t('libraryDescription')}
                             </p>
                         )}
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                        <LanguageSelector />
                         <GoogleLoginComponent />
                         {/* Solo mostrar el botón de agregar libro si está autenticado */}
                         {isAuthenticated && (
@@ -193,9 +197,9 @@ const Index = () => {
                 {/* Mensaje de bienvenida para usuarios no autenticados */}
                 {!isAuthenticated && (
                     <div className="bg-muted/50 border border-border rounded-lg p-6 mb-6 text-center">
-                        <h3 className="text-lg font-semibold mb-2">Bienvenida a mi biblioteca</h3>
+                        <h3 className="text-lg font-semibold mb-2">{t('welcomeToLibrary')}</h3>
                         <p className="text-muted-foreground">
-                            Cada libro aquí guarda una historia, una lección o un momento. Bienvenida a mi universo literario personal.
+                            {t('welcomeDescription')}
                         </p>
                     </div>
                 )}
@@ -224,7 +228,7 @@ const Index = () => {
                         </p>
                         {totalPages > 1 && (
                             <p className="text-sm text-muted-foreground">
-                                Página {currentPage + 1} de {totalPages}
+                                {t('page')} {currentPage + 1} {t('of')} {totalPages}
                             </p>
                         )}
                     </div>
@@ -250,7 +254,7 @@ const Index = () => {
                             disabled={!hasPrevPage}
                         >
                             <ChevronLeft className="h-4 w-4 mr-2" />
-                            Anterior
+                            {t('previous')}
                         </Button>
 
                         <span className="text-sm text-muted-foreground px-4">
@@ -262,7 +266,7 @@ const Index = () => {
                             onClick={() => setCurrentPage(prev => prev + 1)}
                             disabled={!hasNextPage}
                         >
-                            Siguiente
+                            {t('next')}
                             <ChevronRight className="h-4 w-4 ml-2" />
                         </Button>
                     </div>
