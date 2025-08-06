@@ -173,10 +173,13 @@ const Index = () => {
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                     <div>
+                        {/* TODO: Añadir logo biblioteca*/}
                         <h1 className="text-3xl font-bold">Mi biblioteca</h1>
-                        <p className="text-muted-foreground">
-                            Gestiona tu colección personal de libros
-                        </p>
+                        {isAuthenticated && (
+                            <p className="text-muted-foreground">
+                                Cada libro aquí guarda una historia, una lección o un momento.
+                            </p>
+                        )}
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                         <GoogleLoginComponent />
@@ -190,10 +193,9 @@ const Index = () => {
                 {/* Mensaje de bienvenida para usuarios no autenticados */}
                 {!isAuthenticated && (
                     <div className="bg-muted/50 border border-border rounded-lg p-6 mb-6 text-center">
-                        <h3 className="text-lg font-semibold mb-2">Welcome to Your Personal Library</h3>
+                        <h3 className="text-lg font-semibold mb-2">Bienvenida a mi biblioteca</h3>
                         <p className="text-muted-foreground">
-                            Sign in with Google to start managing your book collection, add new books,
-                            track your reading progress, and more!
+                            Cada libro aquí guarda una historia, una lección o un momento. Bienvenida a mi universo literario personal.
                         </p>
                     </div>
                 )}

@@ -2,7 +2,7 @@ import { type Book } from '../../types/book';
 import { Card, CardContent, CardFooter } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { BookOpen, BookOpenCheck, Eye, Edit, Trash2, Clock, Lock } from 'lucide-react';
+import { BookOpen, BookOpenCheck, Eye, Edit, Trash2, Clock } from 'lucide-react';
 import { useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
@@ -113,7 +113,6 @@ export function BookCard({
                         disabled={true}
                         className={`relative ${className}`}
                     >
-                        <Lock className="h-3 w-3 mr-1" />
                         {children}
                     </Button>
                 </div>
@@ -196,7 +195,7 @@ export function BookCard({
                             variant={statusConfig.variant}
                             size="sm"
                             className={`w-full ${statusConfig.className} opacity-60`}
-                            tooltipText="Sign in to update reading status"
+                            tooltipText="Inicia sesión para actualizar el estado de lectura"
                         >
                             <StatusIcon className="h-4 w-4 mr-2" />
                             {statusConfig.label}
@@ -237,13 +236,12 @@ export function BookCard({
                                             className="w-full opacity-60"
                                             disabled={true}
                                         >
-                                            <Lock className="h-3 w-3 mr-1" />
                                             <Edit className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Sign in to edit books</p>
+                                    <p>Inicia sesión para editar</p>
                                 </TooltipContent>
                             </Tooltip>
                         )}
@@ -270,13 +268,12 @@ export function BookCard({
                                             className="w-full opacity-60"
                                             disabled={true}
                                         >
-                                            <Lock className="h-3 w-3 mr-1" />
                                             <Trash2 className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Sign in to delete books</p>
+                                    <p>Inicia sesión para borrar libros</p>
                                 </TooltipContent>
                             </Tooltip>
                         )}

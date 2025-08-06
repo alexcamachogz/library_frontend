@@ -4,7 +4,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
-import { BookOpen, Calendar, Globe, Building, Hash, Lock } from 'lucide-react';
+import { BookOpen, Calendar, Globe, Building, Hash } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 interface BookDetailDialogProps {
@@ -94,7 +94,6 @@ export function BookDetailDialog({
                                                     className="w-full"
                                                     variant="outline"
                                                 >
-                                                    <Lock className="h-4 w-4 mr-2" />
                                                     Editar Libro
                                                 </Button>
                                             </div>

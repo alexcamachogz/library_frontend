@@ -46,7 +46,7 @@ export function BookGrid({
                     <p className="text-muted-foreground">
                         {isAuthenticated
                             ? "No se encontraron libros con los criterios de búsqueda actuales."
-                            : "Sign in to view and manage your personal book collection."
+                            : "Inicia sesión para administrar tu colección de libros."
                         }
                     </p>
                 </div>

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { GoogleUser, AuthContextType } from '../../types/auth';
+import { isEmailAuthorized } from '../../config/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -23,7 +24,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const storedUser = localStorage.getItem('googleUser');
         if (storedUser) {
             try {
-                setUser(JSON.parse(storedUser));
+                const parsedUser = JSON.parse(storedUser);
+                // Verificar si el usuario almacenado sigue siendo autorizado
+                if (isEmailAuthorized(parsedUser.email)) {
+                    setUser(parsedUser);
+                } else {
+                    // Si el usuario ya no está autorizado, limpiar localStorage
+                    console.warn('Stored user is no longer authorized:', parsedUser.email);
+                    localStorage.removeItem('googleUser');
+                }
             } catch (error) {
                 console.error('Error parsing stored user:', error);
                 localStorage.removeItem('googleUser');
@@ -36,7 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.removeItem('googleUser');
     };
 
-    const isAuthenticated = user !== null;
+    const isAuthenticated = user !== null && isEmailAuthorized(user.email);
 
     const value: AuthContextType = {
         user,
