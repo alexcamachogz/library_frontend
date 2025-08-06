@@ -13,6 +13,7 @@ import { BookDetailDialog } from '../components/library/BookDetailDialog';
 import { EditBookDialog } from '../components/library/EditBookDialog';
 import { Button } from '../components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { GoogleLoginComponent } from '../components/auth/GoogleLogin';
 
 const BOOKS_PER_PAGE = 20;
 
@@ -148,7 +149,10 @@ const Index = () => {
                             Gestiona tu colección personal de libros
                         </p>
                     </div>
-                    <AddBookDialog onBookAdded={handleBookAdded} />
+                    <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                        <GoogleLoginComponent />
+                        <AddBookDialog onBookAdded={handleBookAdded} />
+                    </div>
                 </div>
 
                 {/* Statistics */}
