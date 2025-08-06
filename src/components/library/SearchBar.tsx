@@ -142,6 +142,23 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                                 </Select>
                             </div>
 
+                            <div className="space-y-2">
+                                <Label>{t('sortBy')}</Label>
+                                <Select
+                                    value={filters.sortBy || 'default'}
+                                    onValueChange={(value) => updateFilter('sortBy', value === 'default' ? '' : value)}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('defaultSort')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="default">{t('defaultSort')}</SelectItem>
+                                        <SelectItem value="title_asc">{t('titleAsc')}</SelectItem>
+                                        <SelectItem value="title_desc">{t('titleDesc')}</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
                             <div className="flex gap-2 pt-2">
                                 <Button onClick={handleSearch} className="flex-1" disabled={isLoading}>
                                     <Search className="h-4 w-4 mr-2" />
@@ -213,6 +230,15 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('status', '')}
+                            />
+                        </Badge>
+                    )}
+                    {filters.sortBy && (
+                        <Badge variant="secondary" className="gap-1">
+                            {t('sortBy')}: {filters.sortBy === 'title_asc' ? t('titleAsc') : filters.sortBy === 'title_desc' ? t('titleDesc') : t('defaultSort')}
+                            <X
+                                className="h-3 w-3 cursor-pointer"
+                                onClick={() => updateFilter('sortBy', '')}
                             />
                         </Badge>
                     )}

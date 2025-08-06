@@ -43,6 +43,10 @@ const resources = {
       category: 'Category',
       readingStatus: 'Reading Status',
       allStatuses: 'All statuses',
+      sortBy: 'Sort by',
+      defaultSort: 'Default',
+      titleAsc: 'Title (A-Z)',
+      titleDesc: 'Title (Z-A)',
       
       // Book details
       title: 'Title',
@@ -215,6 +219,10 @@ const resources = {
       category: 'Categoría',
       readingStatus: 'Estado de Lectura',
       allStatuses: 'Todos los estados',
+      sortBy: 'Ordenar por',
+      defaultSort: 'Por defecto',
+      titleAsc: 'Título (A-Z)',
+      titleDesc: 'Título (Z-A)',
       
       // Book details
       title: 'Título',

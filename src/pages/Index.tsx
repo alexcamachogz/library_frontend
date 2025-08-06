@@ -49,16 +49,17 @@ const Index = () => {
         queryFn: async () => {
             const skip = currentPage * BOOKS_PER_PAGE;
 
-            // Check if we have search filters
-            const hasFilters = Object.values(searchFilters).some(v => v && v.length > 0);
+            // Check if we have search filters (excluding sortBy as it's handled client-side)
+            const { sortBy, ...searchOnlyFilters } = searchFilters;
+            const hasFilters = Object.values(searchOnlyFilters).some(v => v && v.length > 0);
 
             if (hasFilters) {
                 // If status filter, use status endpoint
                 if (searchFilters.status && !searchFilters.query && !searchFilters.title && !searchFilters.author && !searchFilters.category) {
                     return libraryAPI.getBooksByStatus(searchFilters.status, BOOKS_PER_PAGE, skip);
                 }
-                // Use search endpoint
-                return libraryAPI.searchBooks(searchFilters, BOOKS_PER_PAGE, skip);
+                // Use search endpoint with filters excluding sortBy
+                return libraryAPI.searchBooks(searchOnlyFilters, BOOKS_PER_PAGE, skip);
             }
 
             // Default: get all books
@@ -72,7 +73,22 @@ const Index = () => {
         queryFn: () => libraryAPI.getStatistics(),
     });
 
-    const books = booksData?.books || [];
+    // Apply sorting to books
+    const sortBooks = (books: Book[], sortBy: string | undefined) => {
+        if (!sortBy || sortBy === 'default') return books;
+        
+        const sortedBooks = [...books];
+        switch (sortBy) {
+            case 'title_asc':
+                return sortedBooks.sort((a, b) => a.title.localeCompare(b.title, 'es', { numeric: true }));
+            case 'title_desc':
+                return sortedBooks.sort((a, b) => b.title.localeCompare(a.title, 'es', { numeric: true }));
+            default:
+                return sortedBooks;
+        }
+    };
+
+    const books = sortBooks(booksData?.books || [], searchFilters.sortBy);
     const pagination = booksData?.pagination;
     const statistics = statsData?.statistics;
 

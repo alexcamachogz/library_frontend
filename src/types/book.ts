@@ -63,4 +63,5 @@ export interface SearchFilters {
     author?: string;
     category?: string;
     status?: "read" | "unread" | "in_progress";
+    sortBy?: "title_asc" | "title_desc" | "default";
 }
