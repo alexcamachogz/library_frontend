@@ -38,6 +38,11 @@ const Index = () => {
         setCurrentPage(0);
     }, [searchFilters]);
 
+    // Scroll to top when page changes
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [currentPage]);
+
     // Fetch books
     const { data: booksData, isLoading: booksLoading } = useQuery({
         queryKey: ['books', searchFilters, currentPage],
