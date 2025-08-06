@@ -1,7 +1,6 @@
 import type { Book, BooksResponse, BookResponse, StatisticsResponse, SearchFilters } from "../types/book.ts";
 
-const API_BASE_URL = 'http://localhost:5001/api/v1';
-// const API_BASE_URL = 'http://192.168.100.32:5001'
+const API_BASE_URL = 'https://librosaurio.onrender.com/api/v1'
 
 class LibraryAPI {
     private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
