@@ -1,6 +1,6 @@
 import type { Book, BooksResponse, BookResponse, StatisticsResponse, SearchFilters } from "../types/book.ts";
 
-const API_BASE_URL = 'https://librosaurio.onrender.com/api/v1'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 class LibraryAPI {
     private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
