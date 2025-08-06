@@ -9,9 +9,18 @@ interface BookGridProps {
     onView: (book: Book) => void;
     onEdit: (book: Book) => void;
     onDelete: (isbn: string) => Promise<void>;
+    isAuthenticated: boolean;
 }
 
-export function BookGrid({ books, isLoading, onStatusChange, onView, onEdit, onDelete }: BookGridProps) {
+export function BookGrid({
+                             books,
+                             isLoading,
+                             onStatusChange,
+                             onView,
+                             onEdit,
+                             onDelete,
+                             isAuthenticated
+                         }: BookGridProps) {
     if (isLoading) {
         return (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -35,7 +44,10 @@ export function BookGrid({ books, isLoading, onStatusChange, onView, onEdit, onD
                     </div>
                     <h3 className="text-lg font-semibold mb-2">No hay libros</h3>
                     <p className="text-muted-foreground">
-                        No se encontraron libros con los criterios de búsqueda actuales.
+                        {isAuthenticated
+                            ? "No se encontraron libros con los criterios de búsqueda actuales."
+                            : "Sign in to view and manage your personal book collection."
+                        }
                     </p>
                 </div>
             </div>
@@ -52,6 +64,7 @@ export function BookGrid({ books, isLoading, onStatusChange, onView, onEdit, onD
                     onView={onView}
                     onEdit={onEdit}
                     onDelete={onDelete}
+                    isAuthenticated={isAuthenticated}
                 />
             ))}
         </div>

@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Book, SearchFilters } from "../types/book.ts";
 import { libraryAPI } from '../services/api';
 import { useToast } from '../hooks/use-toast';
+import { useAuth } from '../components/auth/AuthContext';
 
 // Components
 import { StatisticsCards } from '../components/library/StatisticsCards';
@@ -27,6 +28,7 @@ const Index = () => {
 
     const { toast } = useToast();
     const queryClient = useQueryClient();
+    const { isAuthenticated } = useAuth();
 
     // Reset page when search changes
     useEffect(() => {
@@ -71,6 +73,15 @@ const Index = () => {
     };
 
     const handleStatusChange = async (isbn: string, status: "read" | "unread" | "in_progress") => {
+        if (!isAuthenticated) {
+            toast({
+                title: "Authentication required",
+                description: "Please sign in to update book status",
+                variant: "destructive",
+            });
+            return;
+        }
+
         try {
             await libraryAPI.updateReadingStatus(isbn, status);
             queryClient.invalidateQueries({ queryKey: ['books'] });
@@ -96,6 +107,15 @@ const Index = () => {
     };
 
     const handleDelete = async (isbn: string) => {
+        if (!isAuthenticated) {
+            toast({
+                title: "Authentication required",
+                description: "Please sign in to delete books",
+                variant: "destructive",
+            });
+            return;
+        }
+
         try {
             await libraryAPI.deleteBook(isbn);
             queryClient.invalidateQueries({ queryKey: ['books'] });
@@ -119,6 +139,15 @@ const Index = () => {
     };
 
     const handleEdit = (book: Book) => {
+        if (!isAuthenticated) {
+            toast({
+                title: "Authentication required",
+                description: "Please sign in to edit books",
+                variant: "destructive",
+            });
+            return;
+        }
+
         setEditingBook(book);
         setShowEdit(true);
     };
@@ -151,15 +180,31 @@ const Index = () => {
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                         <GoogleLoginComponent />
-                        <AddBookDialog onBookAdded={handleBookAdded} />
+                        {/* Solo mostrar el botón de agregar libro si está autenticado */}
+                        {isAuthenticated && (
+                            <AddBookDialog onBookAdded={handleBookAdded} />
+                        )}
                     </div>
                 </div>
 
-                {/* Statistics */}
-                <StatisticsCards
-                    statistics={statistics}
-                    isLoading={statsLoading}
-                />
+                {/* Mensaje de bienvenida para usuarios no autenticados */}
+                {!isAuthenticated && (
+                    <div className="bg-muted/50 border border-border rounded-lg p-6 mb-6 text-center">
+                        <h3 className="text-lg font-semibold mb-2">Welcome to Your Personal Library</h3>
+                        <p className="text-muted-foreground">
+                            Sign in with Google to start managing your book collection, add new books,
+                            track your reading progress, and more!
+                        </p>
+                    </div>
+                )}
+
+                {/* Statistics - Solo mostrar si está autenticado */}
+                {isAuthenticated && (
+                    <StatisticsCards
+                        statistics={statistics}
+                        isLoading={statsLoading}
+                    />
+                )}
 
                 {/* Search */}
                 <div className="mb-6">
@@ -191,6 +236,7 @@ const Index = () => {
                     onView={handleView}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    isAuthenticated={isAuthenticated}
                 />
 
                 {/* Pagination */}
@@ -226,6 +272,7 @@ const Index = () => {
                     open={showDetail}
                     onOpenChange={setShowDetail}
                     onEdit={handleEdit}
+                    isAuthenticated={isAuthenticated}
                 />
 
                 <EditBookDialog

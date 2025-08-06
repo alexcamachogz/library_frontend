@@ -4,16 +4,24 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
-import { BookOpen, Calendar, Globe, Building, Hash, Clock, BookCheck } from 'lucide-react';
+import { BookOpen, Calendar, Globe, Building, Hash, Lock } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 interface BookDetailDialogProps {
     book: Book | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onEdit: (book: Book) => void;
+    isAuthenticated: boolean;
 }
 
-export function BookDetailDialog({ book, open, onOpenChange, onEdit }: BookDetailDialogProps) {
+export function BookDetailDialog({
+                                     book,
+                                     open,
+                                     onOpenChange,
+                                     onEdit,
+                                     isAuthenticated
+                                 }: BookDetailDialogProps) {
     if (!book) return null;
 
     const formatDate = (dateString: string) => {
@@ -28,35 +36,10 @@ export function BookDetailDialog({ book, open, onOpenChange, onEdit }: BookDetai
         }
     };
 
-    const getStatusConfig = (status: Book['reading_status']) => {
-        switch (status) {
-            case 'read':
-                return {
-                    icon: BookCheck,
-                    label: 'Leído',
-                    variant: 'default' as const,
-                    className: 'bg-green-500 text-white'
-                };
-            case 'in_progress':
-                return {
-                    icon: Clock,
-                    label: 'Leyendo',
-                    variant: 'secondary' as const,
-                    className: 'bg-blue-500 text-white'
-                };
-            case 'unread':
-            default:
-                return {
-                    icon: BookOpen,
-                    label: 'No leído',
-                    variant: 'outline' as const,
-                    className: 'bg-gray-100'
-                };
-        }
+    const handleEdit = () => {
+        if (!isAuthenticated) return;
+        onEdit(book);
     };
-
-    const statusConfig = getStatusConfig(book.reading_status);
-    const StatusIcon = statusConfig.icon;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -92,18 +75,35 @@ export function BookDetailDialog({ book, open, onOpenChange, onEdit }: BookDetai
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Badge
-                                        variant={statusConfig.variant}
-                                        className={`flex items-center gap-1 ${statusConfig.className}`}
-                                    >
-                                        <StatusIcon className="h-3 w-3" />
-                                        {statusConfig.label}
+                                    <Badge variant={book.reading_status === 'read' ? 'default' : 'secondary'}>
+                                        {book.reading_status === 'read' ? 'Leído' : 'No leído'}
                                     </Badge>
                                 </div>
 
-                                <Button onClick={() => onEdit(book)} className="w-full">
-                                    Editar Libro
-                                </Button>
+                                {/* Edit Button - Conditional */}
+                                {isAuthenticated ? (
+                                    <Button onClick={handleEdit} className="w-full">
+                                        Editar Libro
+                                    </Button>
+                                ) : (
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div>
+                                                <Button
+                                                    disabled
+                                                    className="w-full"
+                                                    variant="outline"
+                                                >
+                                                    <Lock className="h-4 w-4 mr-2" />
+                                                    Editar Libro
+                                                </Button>
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Sign in to edit books</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                )}
                             </div>
                         </div>
 

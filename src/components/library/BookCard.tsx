@@ -2,8 +2,9 @@ import { type Book } from '../../types/book';
 import { Card, CardContent, CardFooter } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { BookOpen, BookOpenCheck, Eye, Edit, Trash2, Clock } from 'lucide-react';
+import { BookOpen, BookOpenCheck, Eye, Edit, Trash2, Clock, Lock } from 'lucide-react';
 import { useState } from 'react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 interface BookCardProps {
     book: Book;
@@ -11,9 +12,17 @@ interface BookCardProps {
     onView: (book: Book) => void;
     onEdit: (book: Book) => void;
     onDelete: (isbn: string) => Promise<void>;
+    isAuthenticated: boolean;
 }
 
-export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: BookCardProps) {
+export function BookCard({
+                             book,
+                             onStatusChange,
+                             onView,
+                             onEdit,
+                             onDelete,
+                             isAuthenticated
+                         }: BookCardProps) {
     const [isUpdating, setIsUpdating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -32,6 +41,8 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
     };
 
     const handleStatusCycle = async () => {
+        if (!isAuthenticated) return;
+
         setIsUpdating(true);
         try {
             const newStatus = getNextStatus(book.reading_status);
@@ -42,12 +53,19 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
     };
 
     const handleDelete = async () => {
+        if (!isAuthenticated) return;
+
         setIsDeleting(true);
         try {
             await onDelete(book.isbn);
         } finally {
             setIsDeleting(false);
         }
+    };
+
+    const handleEdit = () => {
+        if (!isAuthenticated) return;
+        onEdit(book);
     };
 
     const getStatusConfig = (status: Book['reading_status']) => {
@@ -79,6 +97,32 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
 
     const statusConfig = getStatusConfig(book.reading_status);
     const StatusIcon = statusConfig.icon;
+
+    // Componente para botón deshabilitado con tooltip
+    interface DisabledButtonProps extends React.ComponentProps<typeof Button> {
+        children: React.ReactNode;
+        tooltipText: string;
+    }
+
+    const DisabledButton = ({ children, tooltipText, className, ...props }: DisabledButtonProps) => (
+        <Tooltip>
+            <TooltipTrigger asChild>
+                <div className="w-full">
+                    <Button
+                        {...props}
+                        disabled={true}
+                        className={`relative ${className}`}
+                    >
+                        <Lock className="h-3 w-3 mr-1" />
+                        {children}
+                    </Button>
+                </div>
+            </TooltipTrigger>
+            <TooltipContent>
+                <p>{tooltipText}</p>
+            </TooltipContent>
+        </Tooltip>
+    );
 
     return (
         <Card className="h-full flex flex-col hover:shadow-lg transition-shadow">
@@ -135,20 +179,33 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
             <CardFooter className="p-4 pt-0">
                 <div className="w-full space-y-2">
                     {/* Reading Status Cycle Button */}
-                    <Button
-                        variant={statusConfig.variant}
-                        size="sm"
-                        className={`w-full ${statusConfig.className}`}
-                        onClick={handleStatusCycle}
-                        disabled={isUpdating}
-                        title={`Cambiar de "${statusConfig.label}" a "${getStatusConfig(getNextStatus(book.reading_status)).label}"`}
-                    >
-                        <StatusIcon className="h-4 w-4 mr-2" />
-                        {statusConfig.label}
-                    </Button>
+                    {isAuthenticated ? (
+                        <Button
+                            variant={statusConfig.variant}
+                            size="sm"
+                            className={`w-full ${statusConfig.className}`}
+                            onClick={handleStatusCycle}
+                            disabled={isUpdating}
+                            title={`Cambiar de "${statusConfig.label}" a "${getStatusConfig(getNextStatus(book.reading_status)).label}"`}
+                        >
+                            <StatusIcon className="h-4 w-4 mr-2" />
+                            {statusConfig.label}
+                        </Button>
+                    ) : (
+                        <DisabledButton
+                            variant={statusConfig.variant}
+                            size="sm"
+                            className={`w-full ${statusConfig.className} opacity-60`}
+                            tooltipText="Sign in to update reading status"
+                        >
+                            <StatusIcon className="h-4 w-4 mr-2" />
+                            {statusConfig.label}
+                        </DisabledButton>
+                    )}
 
                     {/* Action Buttons - New row */}
                     <div className="flex gap-1 w-full">
+                        {/* View button - always available */}
                         <Button
                             variant="ghost"
                             size="sm"
@@ -158,25 +215,71 @@ export function BookCard({ book, onStatusChange, onView, onEdit, onDelete }: Boo
                         >
                             <Eye className="h-4 w-4" />
                         </Button>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="flex-1"
-                            onClick={() => onEdit(book)}
-                            title="Editar libro"
-                        >
-                            <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="flex-1"
-                            onClick={handleDelete}
-                            disabled={isDeleting}
-                            title="Eliminar libro"
-                        >
-                            <Trash2 className="h-4 w-4" />
-                        </Button>
+
+                        {/* Edit button - conditional */}
+                        {isAuthenticated ? (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="flex-1"
+                                onClick={handleEdit}
+                                title="Editar libro"
+                            >
+                                <Edit className="h-4 w-4" />
+                            </Button>
+                        ) : (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <div className="flex-1">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="w-full opacity-60"
+                                            disabled={true}
+                                        >
+                                            <Lock className="h-3 w-3 mr-1" />
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Sign in to edit books</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        )}
+
+                        {/* Delete button - conditional */}
+                        {isAuthenticated ? (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="flex-1"
+                                onClick={handleDelete}
+                                disabled={isDeleting}
+                                title="Eliminar libro"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        ) : (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <div className="flex-1">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="w-full opacity-60"
+                                            disabled={true}
+                                        >
+                                            <Lock className="h-3 w-3 mr-1" />
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Sign in to delete books</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        )}
                     </div>
                 </div>
             </CardFooter>
