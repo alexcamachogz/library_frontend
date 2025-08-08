@@ -199,17 +199,6 @@ If you have any questions or run into issues:
 2. Create a new issue with detailed information
 3. Include browser version, OS, and steps to reproduce
 
-## 🎯 Roadmap
-
-- [ ] Book recommendations based on reading history
-- [ ] Reading goals and progress tracking
-- [ ] Book notes and reviews
-- [ ] Export/import library data
-- [ ] Dark mode support
-- [ ] Offline reading list
-- [ ] Social features (share books, reading lists)
-- [ ] Mobile app with React Native
-
 ---
 
 **Built with ❤️ using modern web technologies**
