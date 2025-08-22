@@ -268,24 +268,98 @@ const Index = () => {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="flex justify-center items-center gap-2 mt-8">
+                    <div className="flex justify-center items-center gap-1 mt-8 flex-wrap">
+                        {/* Previous Button */}
                         <Button
                             variant="outline"
                             onClick={() => setCurrentPage(prev => prev - 1)}
                             disabled={!hasPrevPage}
+                            className="mr-2"
                         >
                             <ChevronLeft className="h-4 w-4 mr-2" />
                             {t('previous')}
                         </Button>
 
-                        <span className="text-sm text-muted-foreground px-4">
-                            {currentPage + 1} / {totalPages}
-                        </span>
+                        {/* Page Numbers */}
+                        {(() => {
+                            const pages = [];
+                            const maxVisiblePages = 5;
+                            let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
+                            const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
+                            
+                            // Adjust start if we're near the end
+                            if (endPage - startPage + 1 < maxVisiblePages) {
+                                startPage = Math.max(0, endPage - maxVisiblePages + 1);
+                            }
 
+                            // First page + ellipsis
+                            if (startPage > 0) {
+                                pages.push(
+                                    <Button
+                                        key={0}
+                                        variant={currentPage === 0 ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => setCurrentPage(0)}
+                                        className="w-10 h-10"
+                                    >
+                                        1
+                                    </Button>
+                                );
+                                if (startPage > 1) {
+                                    pages.push(
+                                        <span key="ellipsis1" className="px-2 text-muted-foreground">
+                                            ...
+                                        </span>
+                                    );
+                                }
+                            }
+
+                            // Visible page range
+                            for (let i = startPage; i <= endPage; i++) {
+                                pages.push(
+                                    <Button
+                                        key={i}
+                                        variant={currentPage === i ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => setCurrentPage(i)}
+                                        className="w-10 h-10"
+                                    >
+                                        {i + 1}
+                                    </Button>
+                                );
+                            }
+
+                            // Last page + ellipsis
+                            if (endPage < totalPages - 1) {
+                                if (endPage < totalPages - 2) {
+                                    pages.push(
+                                        <span key="ellipsis2" className="px-2 text-muted-foreground">
+                                            ...
+                                        </span>
+                                    );
+                                }
+                                pages.push(
+                                    <Button
+                                        key={totalPages - 1}
+                                        variant={currentPage === totalPages - 1 ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => setCurrentPage(totalPages - 1)}
+                                        className="w-10 h-10"
+                                    >
+                                        {totalPages}
+                                    </Button>
+                                );
+                            }
+
+                            return pages;
+                        })()}
+
+                        {/* Next Button */}
                         <Button
                             variant="outline"
                             onClick={() => setCurrentPage(prev => prev + 1)}
                             disabled={!hasNextPage}
+                            className="ml-2"
                         >
                             {t('next')}
                             <ChevronRight className="h-4 w-4 ml-2" />
