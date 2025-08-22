@@ -29,6 +29,7 @@ interface ManualBookData {
     language: string;
     cover_image: string;
     reading_status: "read" | "unread" | "in_progress";
+    format: "" | "physical" | "digital";
 }
 
 export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
@@ -50,7 +51,8 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
         published_date: '',
         language: '',
         cover_image: '',
-        reading_status: 'unread'
+        reading_status: 'unread',
+        format: ''
     });
 
     const [newAuthor, setNewAuthor] = useState('');
@@ -72,7 +74,8 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
             published_date: '',
             language: '',
             cover_image: '',
-            reading_status: 'unread'
+            reading_status: 'unread',
+            format: ''
         });
         setNewAuthor('');
         setNewCategory('');
@@ -292,7 +295,12 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
                                                 placeholder={t('addAuthorPlaceholder')}
                                                 value={newAuthor}
                                                 onChange={(e) => setNewAuthor(e.target.value)}
-                                                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addAuthor())}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        e.preventDefault();
+                                                        addAuthor();
+                                                    }
+                                                }}
                                             />
                                             <Button type="button" onClick={addAuthor} size="sm">
                                                 <Plus className="h-4 w-4" />
@@ -360,7 +368,12 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
                                                 placeholder={t('addCategoryPlaceholder')}
                                                 value={newCategory}
                                                 onChange={(e) => setNewCategory(e.target.value)}
-                                                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        e.preventDefault();
+                                                        addCategory();
+                                                    }
+                                                }}
                                             />
                                             <Button type="button" onClick={addCategory} size="sm">
                                                 <Plus className="h-4 w-4" />
@@ -424,22 +437,42 @@ export function AddBookDialog({ onBookAdded }: AddBookDialogProps) {
                                         </div>
                                     </div>
 
-                                    {/* Reading Status */}
-                                    <div className="space-y-2">
-                                        <Label>{t('readingStatusField')}</Label>
-                                        <Select
-                                            value={manualData.reading_status}
-                                            onValueChange={(value: "read" | "unread" | "in_progress") => updateManualData('reading_status', value)}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="unread">{t('unreadStatus')}</SelectItem>
-                                                <SelectItem value="in_progress">{t('inProgressStatus')}</SelectItem>
-                                                <SelectItem value="read">{t('readStatus')}</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                    {/* Reading Status and Format */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>{t('readingStatusField')}</Label>
+                                            <Select
+                                                value={manualData.reading_status}
+                                                onValueChange={(value: "read" | "unread" | "in_progress") => updateManualData('reading_status', value)}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="unread">{t('unreadStatus')}</SelectItem>
+                                                    <SelectItem value="in_progress">{t('inProgressStatus')}</SelectItem>
+                                                    <SelectItem value="read">{t('readStatus')}</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>{t('format')}</Label>
+                                            <Select
+                                                value={manualData.format || "not_specified"}
+                                                onValueChange={(value: "not_specified" | "physical" | "digital") => 
+                                                    updateManualData('format', value === "not_specified" ? "" : value)
+                                                }
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={t('selectFormat')} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="not_specified">{t('notSpecified')}</SelectItem>
+                                                    <SelectItem value="physical">{t('physical')}</SelectItem>
+                                                    <SelectItem value="digital">{t('digital')}</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
                                     </div>
 
                                     {/* Actions */}

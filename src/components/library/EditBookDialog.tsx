@@ -204,7 +204,6 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                             <div className="flex gap-2">
                                 <Input
                                     placeholder={t('addCategoryPlaceholder')}
-                                    value={newCategory}
                                     onChange={(e) => setNewCategory(e.target.value)}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
@@ -298,16 +297,16 @@ export function EditBookDialog({ book, open, onOpenChange, onBookUpdated }: Edit
                             <div className="space-y-2">
                                 <Label>{t('format')}</Label>
                                 <Select
-                                    value={formData.format || ""}
-                                    onValueChange={(value: "" | "physical" | "digital") =>
-                                        setFormData(prev => ({ ...prev, format: value }))
+                                    value={formData.format || "not_specified"}
+                                    onValueChange={(value: "not_specified" | "physical" | "digital") =>
+                                        setFormData(prev => ({ ...prev, format: value === "not_specified" ? "" : value }))
                                     }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder={t('selectFormat')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">{t('notSpecified')}</SelectItem>
+                                        <SelectItem value="not_specified">{t('notSpecified')}</SelectItem>
                                         <SelectItem value="physical">{t('physical')}</SelectItem>
                                         <SelectItem value="digital">{t('digital')}</SelectItem>
                                     </SelectContent>
