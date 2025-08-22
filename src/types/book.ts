@@ -11,6 +11,7 @@ export interface Book {
     publisher: string;
     language: string;
     reading_status: "read" | "unread" | "in_progress";
+    format: "" | "physical" | "digital";
 }
 
 export interface Pagination {

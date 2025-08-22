@@ -174,6 +174,12 @@ export function BookCard({
                             {book.page_count} {t('pages')}
                         </p>
                     )}
+
+                    {book.format && (
+                        <p className="text-xs text-muted-foreground">
+                            {book.format === 'physical' ? t('physical') : book.format === 'digital' ? t('digital') : ''}
+                        </p>
+                    )}
                 </div>
             </CardContent>
 
