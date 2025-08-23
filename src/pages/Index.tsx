@@ -17,6 +17,7 @@ import { Button } from '../components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { GoogleLoginComponent } from '../components/auth/GoogleLogin';
 import { LanguageSelector } from '../components/ui/language-selector';
+import librosaurioLogo from '../assets/librosaurio-logo.png';
 
 const BOOKS_PER_PAGE = 20;
 
@@ -196,14 +197,20 @@ const Index = () => {
             <div className="container mx-auto px-4 py-8">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                    <div>
-                        {/* TODO: Añadir logo biblioteca*/}
-                        <h1 className="text-3xl font-bold">{t('library')}</h1>
-                        {isAuthenticated && (
-                            <p className="text-muted-foreground">
-                                {t('libraryDescription')}
-                            </p>
-                        )}
+                    <div className="flex items-center gap-4">
+                        <img 
+                            src={librosaurioLogo} 
+                            alt="Librosaurio Logo" 
+                            className="w-16 h-16 object-contain"
+                        />
+                        <div>
+                            <h1 className="text-3xl font-bold">{t('library')}</h1>
+                            {isAuthenticated && (
+                                <p className="text-muted-foreground">
+                                    {t('libraryDescription')}
+                                </p>
+                            )}
+                        </div>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                         <LanguageSelector />
