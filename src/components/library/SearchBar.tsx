@@ -153,8 +153,8 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">{t('allFormats')}</SelectItem>
-                                        <SelectItem value="physical">📚 {t('physical')} Book</SelectItem>
-                                        <SelectItem value="digital">💻 {t('digital')} Book</SelectItem>
+                                        <SelectItem value="physical">📚 {t('physicalBook')}</SelectItem>
+                                        <SelectItem value="digital">💻 {t('digitalBook')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -252,7 +252,7 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                     )}
                     {filters.format && (
                         <Badge variant="secondary" className="gap-1">
-                            {t('format')}: {filters.format === 'physical' ? `${t('physical')} Book` : `${t('digital')} Book`}
+                            {t('format')}: {filters.format === 'physical' ? t('physicalBook') : t('digitalBook')}
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('format', '')}

@@ -142,6 +142,8 @@ const resources = {
       allFormats: 'All formats',
       physical: 'Physical',
       digital: 'Digital',
+      physicalBook: 'Physical Book',
+      digitalBook: 'Digital Book',
       notSpecified: 'Not specified',
       selectFormat: 'Select format...',
       
@@ -326,6 +328,8 @@ const resources = {
       allFormats: 'Todos los formatos',
       physical: 'Físico',
       digital: 'Digital',
+      physicalBook: 'Libro Físico',
+      digitalBook: 'Libro Digital',
       notSpecified: 'No especificado',
       selectFormat: 'Seleccionar formato...',
       

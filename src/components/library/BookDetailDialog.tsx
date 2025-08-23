@@ -4,7 +4,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
-import { BookOpen, Calendar, Globe, Building, Hash } from 'lucide-react';
+import { BookOpen, Calendar, Globe, Building, Hash, Package } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useTranslation } from 'react-i18next';
 
@@ -176,6 +176,14 @@ export function BookDetailDialog({
                                         <Globe className="h-4 w-4 text-muted-foreground" />
                                         <span className="font-medium">{t('language')}:</span>
                                         <span>{book.language}</span>
+                                    </div>
+                                )}
+
+                                {book.format && (
+                                    <div className="flex items-center gap-2">
+                                        <Package className="h-4 w-4 text-muted-foreground" />
+                                        <span className="font-medium">{t('format')}:</span>
+                                        <span>{book.format === 'physical' ? t('physicalBook') : book.format === 'digital' ? t('digitalBook') : ''}</span>
                                     </div>
                                 )}
                             </div>
