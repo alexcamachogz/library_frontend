@@ -136,6 +136,14 @@ const resources = {
       publishedDateField: 'Published Date',
       languageField: 'Language',
       readingStatusField: 'Reading Status',
+      format: 'Format',
+      
+      // Format options
+      allFormats: 'All formats',
+      physical: 'Physical',
+      digital: 'Digital',
+      notSpecified: 'Not specified',
+      selectFormat: 'Select format...',
       
       // Placeholders
       exampleISBN: 'e.g. 9780439708180',
@@ -312,6 +320,14 @@ const resources = {
       publishedDateField: 'Fecha de Publicación',
       languageField: 'Idioma',
       readingStatusField: 'Estado de Lectura',
+      format: 'Formato',
+      
+      // Format options
+      allFormats: 'Todos los formatos',
+      physical: 'Físico',
+      digital: 'Digital',
+      notSpecified: 'No especificado',
+      selectFormat: 'Seleccionar formato...',
       
       // Placeholders
       exampleISBN: 'ej. 9780439708180',

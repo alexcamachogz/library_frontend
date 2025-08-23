@@ -177,7 +177,7 @@ export function BookCard({
 
                     {book.format && (
                         <p className="text-xs text-muted-foreground">
-                            {book.format === 'physical' ? t('physical') : book.format === 'digital' ? t('digital') : ''}
+                            {book.format === 'physical' ? `${t('physical')} Book` : book.format === 'digital' ? `${t('digital')} Book` : ''}
                         </p>
                     )}
                 </div>

@@ -69,6 +69,8 @@ class LibraryAPI {
         if (filters.title) params.append('title', filters.title);
         if (filters.author) params.append('author', filters.author);
         if (filters.category) params.append('category', filters.category);
+        if (filters.status) params.append('status', filters.status);
+        if (filters.format) params.append('format', filters.format);
         params.append('limit', limit.toString());
         params.append('skip', skip.toString());
 

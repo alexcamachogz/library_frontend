@@ -64,5 +64,6 @@ export interface SearchFilters {
     author?: string;
     category?: string;
     status?: "read" | "unread" | "in_progress";
+    format?: "physical" | "digital";
     sortBy?: "title_asc" | "title_desc" | "default";
 }

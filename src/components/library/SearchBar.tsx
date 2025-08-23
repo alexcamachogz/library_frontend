@@ -143,6 +143,23 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                             </div>
 
                             <div className="space-y-2">
+                                <Label>{t('format')}</Label>
+                                <Select
+                                    value={filters.format || 'all'}
+                                    onValueChange={(value) => updateFilter('format', value === 'all' ? '' : value)}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('allFormats')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">{t('allFormats')}</SelectItem>
+                                        <SelectItem value="physical">📚 {t('physical')} Book</SelectItem>
+                                        <SelectItem value="digital">💻 {t('digital')} Book</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="space-y-2">
                                 <Label>{t('sortBy')}</Label>
                                 <Select
                                     value={filters.sortBy || 'default'}
@@ -230,6 +247,15 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                             <X
                                 className="h-3 w-3 cursor-pointer"
                                 onClick={() => updateFilter('status', '')}
+                            />
+                        </Badge>
+                    )}
+                    {filters.format && (
+                        <Badge variant="secondary" className="gap-1">
+                            {t('format')}: {filters.format === 'physical' ? `${t('physical')} Book` : `${t('digital')} Book`}
+                            <X
+                                className="h-3 w-3 cursor-pointer"
+                                onClick={() => updateFilter('format', '')}
                             />
                         </Badge>
                     )}
